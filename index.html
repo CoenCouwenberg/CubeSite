@@ -1,13 +1,133 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<title>Alg trainer</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+		<title>Babylon.js sample code</title>
+
+		<!-- Babylon.js -->
+		<script src="https://code.jquery.com/pep/0.4.2/pep.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.6.2/dat.gui.min.js"></script>
+		<script src="https://preview.babylonjs.com/ammo.js"></script>
+		<script src="https://preview.babylonjs.com/cannon.js"></script>
+		<script src="https://preview.babylonjs.com/Oimo.js"></script>
+		<script src="https://preview.babylonjs.com/earcut.min.js"></script>
+		<script src="https://preview.babylonjs.com/babylon.js"></script>
+		<script src="https://preview.babylonjs.com/materialsLibrary/babylonjs.materials.min.js"></script>
+		<script src="https://preview.babylonjs.com/proceduralTexturesLibrary/babylonjs.proceduralTextures.min.js"></script>
+		<script src="https://preview.babylonjs.com/postProcessesLibrary/babylonjs.postProcess.min.js"></script>
+		<script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.js"></script>
+		<script src="https://preview.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
+		<script src="https://preview.babylonjs.com/gui/babylon.gui.min.js"></script>
+		<script src="https://preview.babylonjs.com/inspector/babylon.inspector.bundle.js"></script>
+
+		<style>
+			html,
+			body {
+				overflow: hidden;
+				width: 100%;
+				height: 100%;
+				margin: 0;
+				padding: 0;
+			}
+
+			#renderCanvas {
+				width: 100%;
+				height: 100%;
+				touch-action: none;
+			}
+		</style>
 	</head>
 	<body>
-		<div class="banner">
-			<h1>Banner</h1>
-		</div>
+		<canvas id="renderCanvas"></canvas>
+		<script>
+			var canvas = document.getElementById("renderCanvas");
+
+			var engine = null;
+			var scene = null;
+			var sceneToRender = null;
+			var createDefaultEngine = function () {
+				return new BABYLON.Engine(canvas, true, {
+					preserveDrawingBuffer: true,
+					stencil: true,
+					disableWebGL2Support: false,
+				});
+			};
+			var delayCreateScene = function () {
+				// Create a scene.
+				var scene = new BABYLON.Scene(engine);
+				var bannerCube;
+				// Parameters: name, position, scene
+				// var camera = new BABYLON.FollowCamera(
+				// 	"FollowCam",
+				// 	new BABYLON.Vector3(0, 10, -10),
+				// 	scene
+				// );
+				// This creates and positions a free camera (non-mesh)
+				var camera = new BABYLON.FreeCamera(
+					"camera1",
+					new BABYLON.Vector3(0, 5, -10),
+					scene
+				);
+
+				// Create a default skybox with an environment.
+				var hdrTexture = BABYLON.CubeTexture.CreateFromPrefilteredData(
+					"textures/environment2.dds",
+					scene
+				);
+				var currentSkybox = scene.createDefaultSkybox(hdrTexture, true);
+
+				// Append glTF model to scene.
+				var bannerCube = BABYLON.SceneLoader.Append(
+					"./",
+					"scene.gltf",
+					scene,
+					function (scene) {
+						// Create a default arc rotate camera and light.
+						scene.createDefaultCameraOrLight(true, true, true);
+
+						// The default camera looks at the back of the asset.
+						// Rotate the camera by 180 degrees to the front of the asset.
+						scene.activeCamera.alpha += Math.PI;
+					}
+				);
+
+				// camera.rotation.x = +0.1;
+				// "3x3 Cube Solve" (https://skfb.ly/6zxJO) by Etherlyte is licensed under Creative Commons Attribution (http://creativecommons.org/licenses/by/4.0/).
+
+				return scene;
+			};
+			var engine;
+			var scene;
+			initFunction = async function () {
+				var asyncEngineCreation = async function () {
+					try {
+						return createDefaultEngine();
+					} catch (e) {
+						console.log(
+							"the available createEngine function failed. Creating the default engine instead"
+						);
+						return createDefaultEngine();
+					}
+				};
+
+				engine = await asyncEngineCreation();
+				if (!engine) throw "engine should not be null.";
+				scene = delayCreateScene();
+			};
+			initFunction().then(() => {
+				sceneToRender = scene;
+				engine.runRenderLoop(function () {
+					if (sceneToRender && sceneToRender.activeCamera) {
+						sceneToRender.render();
+					}
+				});
+			});
+
+			// Resize
+			window.addEventListener("resize", function () {
+				engine.resize();
+			});
+		</script>
 	</body>
 </html>
