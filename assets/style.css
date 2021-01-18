@@ -6,6 +6,7 @@ body {
 	margin: 0;
 	padding: 0;
 	scroll-behavior: smooth;
+	font-family: "Open Sans", sans-serif;
 }
 
 #renderCanvas {
@@ -14,13 +15,20 @@ body {
 	touch-action: none;
 }
 
+.section1 {
+	color: white;
+}
 .title {
-	/* font-size: 50px; */
+	font-size: 2rem;
 	position: absolute;
 	left: 50%;
 	top: 10%;
 	transform: translate(-50%, -50%);
 	text-align: center;
+	text-shadow: 2px 2px #000000;
+}
+.title .bannerSub {
+	margin-top: -40px;
 }
 
 .arrowDown {
@@ -40,11 +48,54 @@ body {
 }
 .arrowDown a {
 	text-decoration: none;
+	color: wheat;
 }
 .section2 {
-	height: 100vh;
+	height: 100%;
 }
 .icon {
 	font-size: 150px;
 	margin: -50px;
+}
+
+/* Section 2 */
+.section2title {
+	text-align: center;
+	font-size: 2rem;
+	transition: top ease 1s;
+}
+.section2title:hover {
+	bottom: 50px;
+}
+.section2title i {
+	font-size: 150px;
+}
+.section2title h2 {
+	margin-top: -50px;
+}
+.section2title a {
+	text-decoration: none;
+	color: black;
+}
+.algorithms {
+	display: flex;
+	justify-content: space-evenly;
+	flex-wrap: wrap;
+}
+.chooseAlg {
+	/* margin-top: 5%; */
+}
+.boxAlg {
+	width: 500px;
+	margin: 20px 50px;
+	/* background-color: gray; */
+	display: flex;
+}
+.boxAlg img {
+	width: 150px;
+}
+.boxAlg .algRight {
+	display: flex;
+	flex-direction: column;
+	margin: 15px;
 }

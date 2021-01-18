@@ -31,11 +31,18 @@
 			crossorigin="anonymous"
 		/>
 
+		<!-- fonts Open Sans-->
+		<link rel="preconnect" href="https://fonts.gstatic.com" />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;0,800;1,300;1,400;1,600;1,700;1,800&display=swap"
+			rel="stylesheet"
+		/>
+
 		<link rel="stylesheet" href="assets/style.css" />
 	</head>
 	<body>
 		<canvas id="renderCanvas"></canvas>
-		<!-- <div class="section1">
+		<div class="section1">
 			<div class="title">
 				<div class="bannerTitle">
 					<h1>Algorithm trainer</h1>
@@ -53,13 +60,62 @@
 					</div>
 				</a>
 			</div>
-		</div> -->
+		</div>
 
-		<!-- <div class="section2">
-			<div class="chooseAlg" id="algSection">
-				<h2>Choose Alg</h2>
+		<div class="section2" id="algSection">
+			<div class="section2title">
+				<a href="#renderCanvas">
+					<i class="fas fa-caret-up"></i>
+					<h2>Choose Alg</h2>
+				</a>
 			</div>
-		</div> -->
+			<div class="chooseAlg">
+				<div class="algorithms">
+					<div class="boxAlg">
+						<img src="imgAlgs/1.png" alt="first alg" />
+						<div class="algRight">
+							<h2>R U R' U R U2' R'</h2>
+							<p>OCLL7 - 27 - <span style="color: blue">probability = 1/54</span></p>
+						</div>
+					</div>
+					<div class="boxAlg">
+						<img src="imgAlgs/1.png" alt="first alg" />
+						<div class="algRight">
+							<h2>R U R' U R U2' R'</h2>
+							<p>OCLL7 - 27 - <span style="color: blue">probability = 1/54</span></p>
+						</div>
+					</div>
+					<div class="boxAlg">
+						<img src="imgAlgs/1.png" alt="first alg" />
+						<div class="algRight">
+							<h2>R U R' U R U2' R'</h2>
+							<p>OCLL7 - 27 - <span style="color: blue">probability = 1/54</span></p>
+						</div>
+					</div>
+					<div class="boxAlg">
+						<img src="imgAlgs/1.png" alt="first alg" />
+						<div class="algRight">
+							<h2>R U R' U R U2' R'</h2>
+							<p>OCLL7 - 27 - <span style="color: blue">probability = 1/54</span></p>
+						</div>
+					</div>
+					<div class="boxAlg">
+						<img src="imgAlgs/1.png" alt="first alg" />
+						<div class="algRight">
+							<h2>R U R' U R U2' R'</h2>
+							<p>OCLL7 - 27 - <span style="color: blue">probability = 1/54</span></p>
+						</div>
+					</div>
+					<div class="boxAlg">
+						<img src="imgAlgs/1.png" alt="first alg" />
+						<div class="algRight">
+							<h2>R U R' U R U2' R'</h2>
+							<p>OCLL7 - 27 - <span style="color: blue">probability = 1/54</span></p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
 		<script>
 			var canvas = document.getElementById("renderCanvas");
 
