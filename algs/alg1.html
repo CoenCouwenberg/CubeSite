@@ -45,6 +45,7 @@
 				margin: 0;
 				padding: 0;
 				font-family: "Open Sans", sans-serif;
+				color: white;
 			}
 
 			#renderCanvas {
@@ -116,24 +117,25 @@
 			}
 			.arrowBack a {
 				text-decoration: none;
-				color: black;
+				color: white;
 			}
 
 			.resetButton {
 				font-size: 50px;
 				position: absolute;
 				right: 5%;
-				top: 5%;
-				transform: translate(-50%, -50%);
+				top: 1%;
+				/* transform: translate(-50%, -50%); */
 				transition: all 0.3s ease-in-out 0s;
+				transform-origin: center;
 			}
 			.resetButton:hover {
 				transform: rotate(-180deg);
-				top: 20px;
+				/* top: 20px; */
 			}
 			.resetButton a {
 				text-decoration: none;
-				color: black;
+				color: white;
 			}
 		</style>
 	</head>
@@ -141,7 +143,7 @@
 		<canvas id="renderCanvas"></canvas>
 
 		<div class="arrowBack">
-			<a href="../../cubeSite/#algSection">
+			<a href="https://cube.coencouwenberg.nl/">
 				<i class="fas fa-caret-left">Back</i>
 			</a>
 		</div>
@@ -210,6 +212,24 @@
 					camera.attachControl(canvas, true);
 					camera.lowerRadiusLimit = 10;
 					camera.upperRadiusLimit = 10;
+
+					// Background
+					var skybox = BABYLON.Mesh.CreateBox("skyBox", 100.0, scene);
+					var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
+					skyboxMaterial.backFaceCulling = false;
+					skyboxMaterial.disableLighting = true;
+					skybox.material = skyboxMaterial;
+
+					skybox.infiniteDistance = true;
+
+					skyboxMaterial.disableLighting = true;
+
+					skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture(
+						"../textures/skybox/skybox",
+						scene
+					);
+					skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+
 					// Lamp van binnen maken
 					const light = new BABYLON.HemisphericLight(
 						"light",
@@ -222,7 +242,8 @@
 					// Zorgt dat het licht niet terug reflecteerd (was erg irritant)
 					light.specular = new BABYLON.Color3.Black();
 
-					scene.clearColor = new BABYLON.Color3(0.8, 0.8, 0.8);
+					// scene.clearColor = new BABYLON.Color3(0.3, 0.3, 0.3);
+					// scene.clearColor = BABYLON.Color3.Green();
 
 					// Lichten dimmen met SPATIE met deze action kan ik later ook proberen de formule op pauze te zetten of een stap terug te gaan https://youtu.be/_fTS5W0RPkc?t=337
 					scene.actionManager = new BABYLON.ActionManager(scene);
