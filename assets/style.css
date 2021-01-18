@@ -62,10 +62,11 @@ body {
 .section2title {
 	text-align: center;
 	font-size: 2rem;
-	transition: top ease 1s;
+	transition: transform ease 1s;
 }
 .section2title:hover {
-	bottom: 50px;
+	transform: translateY(-10%);
+	top: 4%;
 }
 .section2title i {
 	font-size: 150px;
@@ -82,6 +83,11 @@ body {
 	justify-content: space-evenly;
 	flex-wrap: wrap;
 }
+.algorithms a {
+	text-decoration: none;
+	color: black;
+}
+
 .chooseAlg {
 	/* margin-top: 5%; */
 }
