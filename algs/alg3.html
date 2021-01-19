@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+		<title>Babylon.js Cube Coen Alg 2</title>
+
+		<!-- Babylon.js -->
+		<script src="https://code.jquery.com/pep/0.4.2/pep.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.6.2/dat.gui.min.js"></script>
+		<script src="https://preview.babylonjs.com/ammo.js"></script>
+		<script src="https://preview.babylonjs.com/cannon.js"></script>
+		<script src="https://preview.babylonjs.com/Oimo.js"></script>
+		<script src="https://preview.babylonjs.com/earcut.min.js"></script>
+		<script src="https://preview.babylonjs.com/babylon.js"></script>
+		<script src="https://preview.babylonjs.com/materialsLibrary/babylonjs.materials.min.js"></script>
+		<script src="https://preview.babylonjs.com/proceduralTexturesLibrary/babylonjs.proceduralTextures.min.js"></script>
+		<script src="https://preview.babylonjs.com/postProcessesLibrary/babylonjs.postProcess.min.js"></script>
+		<script src="https://preview.babylonjs.com/loaders/babylonjs.loaders.js"></script>
+		<script src="https://preview.babylonjs.com/serializers/babylonjs.serializers.min.js"></script>
+		<script src="https://preview.babylonjs.com/gui/babylon.gui.min.js"></script>
+		<script src="https://preview.babylonjs.com/inspector/babylon.inspector.bundle.js"></script>
+
+		<!-- Font Awesome  -->
+		<link
+			rel="stylesheet"
+			href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+			integrity="sha384-AYmEC3Yw5cVb3ZcuHtOA93w35dYTsvhLPVnYs9eStHfGJvOvKxVfELGroGkvsg+p"
+			crossorigin="anonymous"
+		/>
+
+		<!-- fonts Open Sans-->
+		<link rel="preconnect" href="https://fonts.gstatic.com" />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;0,800;1,300;1,400;1,600;1,700;1,800&display=swap"
+			rel="stylesheet"
+		/>
+
+		<style>
+			html,
+			body {
+				overflow: hidden;
+				width: 100%;
+				height: 100%;
+				margin: 0;
+				padding: 0;
+				font-family: "Open Sans", sans-serif;
+				color: white;
+			}
+
+			#renderCanvas {
+				width: 100%;
+				height: 100%;
+				touch-action: none;
+			}
+
+			.animated p {
+				animation: animatie 1s;
+			}
+			.alg {
+				font-size: 50px;
+				position: absolute;
+				left: 50%;
+				top: 90%;
+				transform: translate(-50%, -50%);
+				display: inline-flex;
+				/* Flexbos werkte niet */
+			}
+			@keyframes animatie {
+				0% {
+					color: rgb(240, 216, 4);
+				}
+				/* 50% {
+					background-color: white;
+					color: black;
+				} */
+				100% {
+					color: rgb(240, 228, 123);
+				}
+			}
+			.alg :nth-child(1) {
+				animation-delay: 6000ms;
+			}
+			.alg :nth-child(2) {
+				animation-delay: 7000ms;
+			}
+			.alg :nth-child(3) {
+				animation-delay: 8000ms;
+			}
+			.alg :nth-child(4) {
+				animation-delay: 9000ms;
+			}
+			.alg :nth-child(5) {
+				animation-delay: 10000ms;
+			}
+			.alg :nth-child(6) {
+				animation-delay: 11000ms;
+			}
+			.alg :nth-child(7) {
+				animation-delay: 12000ms;
+			}
+			.alg :nth-child(8) {
+				animation-delay: 13000ms;
+			}
+			.alg :nth-child(9) {
+				animation-delay: 14000ms;
+			}
+			.alg :nth-child(10) {
+				animation-delay: 15000ms;
+			}
+			.alg :nth-child(11) {
+				animation-delay: 17000ms;
+			}
+
+			.arrowBack {
+				font-size: 50px;
+				position: absolute;
+				left: 5%;
+				top: 5%;
+				transform: translate(-50%, -50%);
+				/* display: inline-flex; */
+				/* text-align: center; */
+				/* line-height: 0; */
+				/* text-decoration: none; */
+				transition: left ease 1s;
+			}
+			.arrowBack:hover {
+				left: 4%;
+			}
+			.arrowBack a {
+				text-decoration: none;
+				color: white;
+			}
+
+			.resetButton {
+				font-size: 50px;
+				position: absolute;
+				right: 5%;
+				top: 1%;
+				/* transform: translate(-50%, -50%); */
+				transition: all 0.3s ease-in-out 0s;
+				transform-origin: center;
+			}
+			.resetButton:hover {
+				transform: rotate(-180deg);
+				/* top: 20px; */
+			}
+			.resetButton a {
+				text-decoration: none;
+				color: white;
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id="renderCanvas"></canvas>
+
+		<div class="arrowBack">
+			<a href="https://cube.coencouwenberg.nl/#algSection">
+				<i class="fas fa-caret-left">Back</i>
+			</a>
+		</div>
+
+		<div class="resetButton">
+			<a href="./alg3.html">
+				<i class="fas fa-history"></i>
+			</a>
+		</div>
+
+		<div class="alg animated">
+			<p>R&nbsp;</p>
+			<p>U&nbsp;</p>
+			<p>R'&nbsp;</p>
+			<p>U&nbsp;</p>
+			<p>R&nbsp;</p>
+			<p>U'&nbsp;</p>
+			<p>R'&nbsp;</p>
+			<p>U&nbsp;</p>
+			<p>R&nbsp;</p>
+			<p>U2'&nbsp;</p>
+			<p>R'</p>
+			<!-- <p>R U R' U R U2' R'</p> -->
+		</div>
+		<script>
+			var canvas = document.getElementById("renderCanvas");
+
+			var engine = null;
+			var scene = null;
+			var sceneToRender = null;
+			var createDefaultEngine = function () {
+				return new BABYLON.Engine(canvas, true, {
+					preserveDrawingBuffer: true,
+					stencil: true,
+					disableWebGL2Support: false,
+				});
+			};
+			let rotationSpeed = 60; // Was achteraf niet nodig
+			let animationDone = null;
+			class Playground {
+				static CreateScene(engine, canvas) {
+					var scene = new BABYLON.Scene(engine);
+					// Variable kleuren maken
+					var faceColors = [
+						BABYLON.Color4.FromHexString("#0066FFFF"), // Blauw
+						BABYLON.Color4.FromHexString("#33CC00FF"), // Groen
+						BABYLON.Color4.FromHexString("#FF9900FF"), // Oranje
+						BABYLON.Color4.FromHexString("#FF0000FF"), // Rood
+						BABYLON.Color4.FromHexString("#FFFF66FF"), // Geel
+						BABYLON.Color4.FromHexString("#FFFFFFFF"), // Wit
+
+						// BABYLON.Color4.FromHexString("#0066FFFF"),
+						// BABYLON.Color4.FromHexString("#33CC00FF"),
+						// BABYLON.Color4.FromHexString("#FF0000FF"),
+						// BABYLON.Color4.FromHexString("#FF9900FF"),
+						// BABYLON.Color4.FromHexString("#FFFFFFFF"),
+						// BABYLON.Color4.FromHexString("#FFFF66FF"),
+					];
+					// Camera renderen
+					const camera = new BABYLON.ArcRotateCamera(
+						"camera",
+						0,
+						0,
+						10,
+						BABYLON.Vector3.Zero(),
+						scene
+					);
+					camera.setPosition(new BABYLON.Vector3(5, 5, -5));
+					camera.setTarget(BABYLON.Vector3.Zero());
+					camera.attachControl(canvas, true);
+					camera.lowerRadiusLimit = 10;
+					camera.upperRadiusLimit = 10;
+
+					// Background
+					var skybox = BABYLON.Mesh.CreateBox("skyBox", 100.0, scene);
+					var skyboxMaterial = new BABYLON.StandardMaterial("skyBox", scene);
+					skyboxMaterial.backFaceCulling = false;
+					skyboxMaterial.disableLighting = true;
+					skybox.material = skyboxMaterial;
+
+					skybox.infiniteDistance = true;
+
+					skyboxMaterial.disableLighting = true;
+
+					skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture(
+						"../textures/skybox/skybox",
+						scene
+					);
+					skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+
+					// Lamp van binnen maken
+					const light = new BABYLON.HemisphericLight(
+						"light",
+						new BABYLON.Vector3(0, 1, 0),
+						scene
+					);
+					// Lichtere lichtinval, anders word het grimmig
+					light.intensity = 2;
+					light.setDirectionToTarget(BABYLON.Vector3.Zero());
+					// Zorgt dat het licht niet terug reflecteerd (was erg irritant)
+					light.specular = new BABYLON.Color3.Black();
+
+					// scene.clearColor = new BABYLON.Color3(0.3, 0.3, 0.3);
+					// scene.clearColor = BABYLON.Color3.Green();
+
+					// Lichten dimmen met SPATIE met deze action kan ik later ook proberen de formule op pauze te zetten of een stap terug te gaan https://youtu.be/_fTS5W0RPkc?t=337
+					scene.actionManager = new BABYLON.ActionManager(scene);
+					scene.actionManager.registerAction(
+						new BABYLON.ExecuteCodeAction(
+							{
+								trigger: BABYLON.ActionManager.OnKeyUpTrigger,
+								parameter: " ",
+							},
+							function () {
+								light.setEnabled(!light.isEnabled());
+							}
+						)
+					);
+
+					// Een houder voor de kubus
+					const holder = new BABYLON.TransformNode("holder", scene);
+					holder.position.set(0, 0, 0);
+					// Voor de draaing
+					const pivot = new BABYLON.TransformNode("pivot", scene);
+					pivot.position.set(0, 0, 0);
+					const cubies = [];
+					// 3 for loops in elkaar op de X & Y en Z as, 3x3 kubus. Vanaf -1 omdat die dan precies in het midden staat
+					for (let x = -1; x <= 1; x++) {
+						for (let y = -1; y <= 1; y++) {
+							for (let z = -1; z <= 1; z++) {
+								const cubie = BABYLON.MeshBuilder.CreateBox(
+									"cubie",
+									{
+										faceColors,
+									},
+									scene
+								);
+								cubie.position = new BABYLON.Vector3(x, y, z);
+								cubie.parent = holder;
+								cubies.push(cubie);
+							}
+						}
+					}
+					// cubie.rotation.x = +0.1;
+
+					// De parameters aangeven
+					function rotate(cubies, pivot, holder, axisName, isClockwise, options) {
+						const { layersCount, layer = null } = options;
+						// Array voor de Cube aanmaken
+						let newCubies = [];
+						// De verschillende layers van de cube
+						if (layersCount === 3) {
+							newCubies = cubies;
+						} else if (layersCount === 2 && layer !== null) {
+							// Tweede laag
+							const ignorePosition = layer === 1 ? -1 : 1;
+							newCubies = cubies.filter(
+								(cubie) => cubie.position[axisName] !== ignorePosition
+							);
+							console.log(ignorePosition);
+						} else if (layersCount === 1 && layer !== null) {
+							const startPosition = layer - 2;
+							newCubies = cubies.filter(
+								(cubie) => cubie.position[axisName] == startPosition
+							);
+							// console.log(newCubies);
+						}
+						if (cubies.length === 0) return;
+						console.log(cubies.length);
+						// Draaing van de cube, kan ook tegen de klok in wat gelijk staat aan '
+						for (let cubie of newCubies) cubie.setParent(pivot);
+						const angle = isClockwise ? Math.PI / 2 : -Math.PI / 2;
+						console.log("Clockwise: " + isClockwise);
+						const animation = BABYLON.Animation.CreateAndStartAnimation(
+							"rotate",
+							pivot,
+							`rotation.${axisName}`,
+							rotationSpeed,
+							45,
+							0,
+							angle,
+							0
+						);
+
+						console.log("pivot: " + pivot);
+						console.log(angle);
+						console.log(animation);
+						// Animatie
+						if (animation !== null) {
+							animation.onAnimationEnd = () => {
+								for (let cubie of cubies) cubie.setParent(holder);
+								pivot.rotation = BABYLON.Vector3.Zero();
+								for (let cubie of cubies) {
+									cubie.setParent(null);
+									cubie.position.x = Math.round(cubie.position.x);
+									cubie.position.y = Math.round(cubie.position.y);
+									cubie.position.z = Math.round(cubie.position.z);
+								}
+							};
+							animationDone = true;
+							console.log(animationDone);
+						}
+					}
+
+					// setTimeout https://www.w3schools.com/jsref/met_win_settimeout.asp#:~:text=The%20setTimeout()%20method%20calls,use%20the%20setInterval()%20method.
+
+					// function Algoritm() {
+					// 	var interval = setTimeout(U, 1000);
+					// 	var interval = setTimeout(Ur, 1000);
+					// }
+					// Algoritm();
+
+					// aantalTurnen = [];
+					// for(i = 0; i < aantalTurnen; i++) {
+					// 	U D W D
+					// }
+
+					// function U() {
+					// 	setTimeout(() => {
+					// 		rotate(cubies, pivot, holder, "y", true, {
+					// 			layersCount: 1,
+					// 			layer: 3,
+					// 		}); // U
+					// 	}, 1000);
+					// }
+					function Ur() {
+						setTimeout(() => {
+							rotate(cubies, pivot, holder, "y", false, {
+								layersCount: 1,
+								layer: 3,
+							}); // M
+						}, 1000);
+					}
+					// Ur()
+
+					window.addEventListener("load", () => {
+						setTimeout(() => {
+							rotationSpeed = 240;
+							rotate(cubies, pivot, holder, "x", true, { layersCount: 1, layer: 3 }); // R
+						}, 1000);
+						setTimeout(() => {
+							rotate(cubies, pivot, holder, "y", true, { layersCount: 1, layer: 3 }); // U
+						}, 1250);
+						setTimeout(() => {
+							rotate(cubies, pivot, holder, "y", true, { layersCount: 1, layer: 3 }); // U
+						}, 1500);
+						setTimeout(() => {
+							rotate(cubies, pivot, holder, "x", false, { layersCount: 1, layer: 3 }); // R'
+						}, 1750);
+						setTimeout(() => {
+							rotate(cubies, pivot, holder, "y", false, { layersCount: 1, layer: 3 }); // U'
+						}, 2000);
+						setTimeout(() => {
+							rotate(cubies, pivot, holder, "x", true, { layersCount: 1, layer: 3 }); // R
+						}, 2250);
+						setTimeout(() => {
+							rotate(cubies, pivot, holder, "y", true, { layersCount: 1, layer: 3 }); // U
+						}, 2500);
+						setTimeout(() => {
+							rotate(cubies, pivot, holder, "x", false, { layersCount: 1, layer: 3 }); // R'
+						}, 2750);
+						setTimeout(() => {
+							rotate(cubies, pivot, holder, "y", false, { layersCount: 1, layer: 3 }); // U'
+						}, 3000);
+						setTimeout(() => {
+							rotate(cubies, pivot, holder, "x", true, { layersCount: 1, layer: 3 }); // R
+						}, 3250);
+						setTimeout(() => {
+							rotate(cubies, pivot, holder, "y", false, { layersCount: 1, layer: 3 }); // U'
+						}, 3500);
+						setTimeout(() => {
+							rotate(cubies, pivot, holder, "x", false, { layersCount: 1, layer: 3 }); // R'
+						}, 3750);
+
+						// SOLVE 1ST ALG
+
+						setTimeout(() => {
+							rotationSpeed = 60;
+							rotate(cubies, pivot, holder, "x", true, { layersCount: 1, layer: 3 }); // R
+						}, 5000);
+						setTimeout(() => {
+							rotate(cubies, pivot, holder, "y", true, { layersCount: 1, layer: 3 }); // U
+						}, 6000);
+						setTimeout(() => {
+							rotate(cubies, pivot, holder, "x", false, { layersCount: 1, layer: 3 }); // R'
+						}, 7000);
+						setTimeout(() => {
+							rotate(cubies, pivot, holder, "y", true, { layersCount: 1, layer: 3 }); // U
+						}, 8000);
+						setTimeout(() => {
+							rotate(cubies, pivot, holder, "x", true, { layersCount: 1, layer: 3 }); // R
+						}, 9000);
+						setTimeout(() => {
+							rotate(cubies, pivot, holder, "y", false, { layersCount: 1, layer: 3 }); // U'
+						}, 10000);
+						setTimeout(() => {
+							rotate(cubies, pivot, holder, "x", false, { layersCount: 1, layer: 3 }); // R'
+						}, 11000);
+						setTimeout(() => {
+							rotate(cubies, pivot, holder, "y", true, { layersCount: 1, layer: 3 }); // U
+						}, 12000);
+						setTimeout(() => {
+							rotate(cubies, pivot, holder, "x", true, { layersCount: 1, layer: 3 }); // R
+						}, 13000);
+						setTimeout(() => {
+							rotate(cubies, pivot, holder, "y", true, { layersCount: 1, layer: 3 }); // U
+						}, 14000);
+						setTimeout(() => {
+							rotate(cubies, pivot, holder, "y", true, { layersCount: 1, layer: 3 }); // U
+						}, 15000);
+						setTimeout(() => {
+							rotate(cubies, pivot, holder, "x", false, { layersCount: 1, layer: 3 }); // R'
+						}, 16000);
+					});
+
+					// NOTATIONS normal
+					// setTimeout(() => {
+					// 	rotate(cubies, pivot, holder, "x", true, { layersCount: 1, layer: 3 }); // R
+					// }, 1000);
+					// setTimeout(() => {
+					// 	rotate(cubies, pivot, holder, "x", false, { layersCount: 1, layer: 1 }); // L
+					// }, 3000);
+					// setTimeout(() => {
+					// 	rotate(cubies, pivot, holder, "z", false, { layersCount: 1, layer: 1 }); // F
+					// }, 5000);
+					// setTimeout(() => {
+					// 	rotate(cubies, pivot, holder, "z", true, { layersCount: 1, layer: 3 }); // B
+					// }, 7000);
+					// setTimeout(() => {
+					// 	rotate(cubies, pivot, holder, "y", true, { layersCount: 1, layer: 3 }); // U
+					// }, 9000);
+					// setTimeout(() => {
+					// 	rotate(cubies, pivot, holder, "y", false, { layersCount: 1, layer: 1 }); // D
+					// }, 11000);
+
+					// NOTATIONS extra
+					// setTimeout(() => {
+					// 	rotate(cubies, pivot, holder, "x", false, { layersCount: 1, layer: 2 }); // M
+					// }, 7000);
+					// setTimeout(() => {
+					// 	rotate(cubies, pivot, holder, "z", false, { layersCount: 2, layer: 1 }); // f
+					// }, 8000);
+
+					// NOTATIONS reverse
+					// setTimeout(() => {
+					// 	rotate(cubies, pivot, holder, "x", false, { layersCount: 1, layer: 3 }); // R'
+					// }, 1000);
+					// setTimeout(() => {
+					// 	rotate(cubies, pivot, holder, "x", true, { layersCount: 1, layer: 1 }); // L'
+					// }, 2000);
+					// setTimeout(() => {
+					// 	rotate(cubies, pivot, holder, "z", true, { layersCount: 1, layer: 1 }); // F'
+					// }, 3000);
+					// setTimeout(() => {
+					// 	rotate(cubies, pivot, holder, "z", false, { layersCount: 1, layer: 3 }); // B'
+					// }, 4000);
+					// setTimeout(() => {
+					// 	rotate(cubies, pivot, holder, "y", false, { layersCount: 1, layer: 3 }); // U'
+					// }, 5000);
+					// setTimeout(() => {
+					// 	rotate(cubies, pivot, holder, "y", true, { layersCount: 1, layer: 1 }); // D'
+					// }, 6000);
+
+					// Schermen aan de zijkant om beter te testen
+					// scene.debugLayer.show();
+
+					return scene;
+				}
+			}
+			createScene = function () {
+				return Playground.CreateScene(engine, engine.getRenderingCanvas());
+			};
+			var engine;
+			var scene;
+			initFunction = async function () {
+				var asyncEngineCreation = async function () {
+					try {
+						return createDefaultEngine();
+					} catch (e) {
+						console.log(
+							"the available createEngine function failed. Creating the default engine instead"
+						);
+						return createDefaultEngine();
+					}
+				};
+
+				engine = await asyncEngineCreation();
+				if (!engine) throw "engine should not be null.";
+				scene = createScene();
+			};
+			initFunction().then(() => {
+				sceneToRender = scene;
+				engine.runRenderLoop(function () {
+					if (sceneToRender && sceneToRender.activeCamera) {
+						sceneToRender.render();
+					}
+				});
+			});
+
+			// Resize
+			window.addEventListener("resize", function () {
+				engine.resize();
+			});
+
+			// setTimeout(() => {
+			// 	rotationSpeed = 240;
+			// 	rotate(cubies, pivot, holder, "x", true, { layersCount: 1, layer: 3 }); // R
+			// }, 250);
+			// setTimeout(() => {
+			// 	rotationSpeed = 240;
+			// 	rotate(cubies, pivot, holder, "y", true, { layersCount: 1, layer: 3 }); // U
+			// }, 500);
+			// console.log("speed " + rotationSpeed);
+			// // U();
+			// setTimeout(() => {
+			// 	rotationSpeed = 240;
+			// 	rotate(cubies, pivot, holder, "z", false, { layersCount: 1, layer: 1 }); // F
+			// }, 750);
+			// setTimeout(() => {
+			// 	rotationSpeed = 240;
+			// 	rotate(cubies, pivot, holder, "x", false, { layersCount: 1, layer: 1 }); // L
+			// }, 1000);
+			// setTimeout(() => {
+			// 	rotationSpeed = 240;
+			// 	rotate(cubies, pivot, holder, "z", true, { layersCount: 1, layer: 3 }); // B
+			// }, 1250);
+			// setTimeout(() => {
+			// 	rotationSpeed = 240;
+			// 	rotate(cubies, pivot, holder, "y", false, { layersCount: 1, layer: 1 }); // D
+			// }, 1500);
+
+			// setTimeout(() => {
+			// 	rotationSpeed = 240;
+			// 	rotate(cubies, pivot, holder, "x", false, { layersCount: 1, layer: 2 }); // M
+			// }, 1750);
+
+			// setTimeout(() => {
+			// 	rotationSpeed = 240;
+			// 	rotate(cubies, pivot, holder, "x", true, { layersCount: 1, layer: 3 }); // R
+			// }, 2000);
+
+			// setTimeout(() => {
+			// 	rotationSpeed = 240;
+			// 	rotate(cubies, pivot, holder, "y", false, { layersCount: 1, layer: 3 }); // U
+			// }, 2250);
+			// // U();
+			// setTimeout(() => {
+			// 	rotationSpeed = 240;
+			// 	rotate(cubies, pivot, holder, "x", true, { layersCount: 1, layer: 2 }); // M
+			// }, 2500);
+			// setTimeout(() => {
+			// 	rotationSpeed = 240;
+			// 	rotate(cubies, pivot, holder, "z", true, { layersCount: 2, layer: 1 }); // F
+			// }, 2750);
+		</script>
+	</body>
+</html>
