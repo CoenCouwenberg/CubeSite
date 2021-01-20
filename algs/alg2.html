@@ -137,6 +137,34 @@
 				text-decoration: none;
 				color: white;
 			}
+
+			.click {
+				font-size: 40px;
+				position: absolute;
+				left: 50%;
+				top: 10%;
+				transform: translate(-50%, -50%);
+				/* transition: left ease 1s; */
+				animation-name: drag;
+				animation-duration: 20s;
+			}
+			@keyframes drag {
+				0% {
+					left: 40%;
+				}
+				20% {
+					left: 60%;
+				}
+				40% {
+					left: 40%;
+				}
+				60% {
+					left: 60%;
+				}
+				80% {
+					left: 40%;
+				}
+			}
 		</style>
 	</head>
 	<body>
@@ -152,6 +180,10 @@
 			<a href="./alg2.html">
 				<i class="fas fa-history"></i>
 			</a>
+		</div>
+
+		<div class="click">
+			<i class="fas fa-mouse-pointer"></i>
 		</div>
 
 		<div class="alg animated">
