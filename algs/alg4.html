@@ -3,7 +3,7 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-		<title>Babylon.js Cube Coen Alg 3</title>
+		<title>Babylon.js Cube Coen Alg 4</title>
 
 		<!-- Babylon.js -->
 		<script src="https://code.jquery.com/pep/0.4.2/pep.min.js"></script>
@@ -85,31 +85,25 @@
 				animation-delay: 7000ms;
 			}
 			.alg :nth-child(3) {
-				animation-delay: 8000ms;
-			}
-			.alg :nth-child(4) {
 				animation-delay: 9000ms;
 			}
-			.alg :nth-child(5) {
-				animation-delay: 10000ms;
-			}
-			.alg :nth-child(6) {
+			.alg :nth-child(4) {
 				animation-delay: 11000ms;
 			}
-			.alg :nth-child(7) {
+			.alg :nth-child(5) {
 				animation-delay: 12000ms;
 			}
-			.alg :nth-child(8) {
-				animation-delay: 13000ms;
-			}
-			.alg :nth-child(9) {
+			.alg :nth-child(6) {
 				animation-delay: 14000ms;
 			}
-			.alg :nth-child(10) {
-				animation-delay: 15000ms;
+			.alg :nth-child(7) {
+				animation-delay: 16000ms;
 			}
-			.alg :nth-child(11) {
+			.alg :nth-child(8) {
 				animation-delay: 17000ms;
+			}
+			.alg :nth-child(9) {
+				animation-delay: 19000ms;
 			}
 
 			.arrowBack {
@@ -200,16 +194,14 @@
 
 		<div class="alg animated">
 			<p>R&nbsp;</p>
-			<p>U&nbsp;</p>
-			<p>R'&nbsp;</p>
-			<p>U&nbsp;</p>
-			<p>R&nbsp;</p>
+			<p>U2&nbsp;</p>
+			<p>R2&nbsp;</p>
 			<p>U'&nbsp;</p>
-			<p>R'&nbsp;</p>
-			<p>U&nbsp;</p>
+			<p>R2&nbsp;</p>
+			<p>U'&nbsp;</p>
+			<p>R2'&nbsp;</p>
+			<p>U2&nbsp;</p>
 			<p>R&nbsp;</p>
-			<p>U2'&nbsp;</p>
-			<p>R'</p>
 			<!-- <p>R U R' U R U2' R'</p> -->
 		</div>
 		<script>
@@ -426,7 +418,7 @@
 					window.addEventListener("load", () => {
 						setTimeout(() => {
 							rotationSpeed = 240;
-							rotate(cubies, pivot, holder, "x", true, { layersCount: 1, layer: 3 }); // R
+							rotate(cubies, pivot, holder, "x", false, { layersCount: 1, layer: 3 }); // R'
 						}, 1000);
 						setTimeout(() => {
 							rotate(cubies, pivot, holder, "y", true, { layersCount: 1, layer: 3 }); // U
@@ -435,72 +427,82 @@
 							rotate(cubies, pivot, holder, "y", true, { layersCount: 1, layer: 3 }); // U
 						}, 1500);
 						setTimeout(() => {
-							rotate(cubies, pivot, holder, "x", false, { layersCount: 1, layer: 3 }); // R'
+							rotate(cubies, pivot, holder, "x", true, { layersCount: 1, layer: 3 }); // R
 						}, 1750);
 						setTimeout(() => {
-							rotate(cubies, pivot, holder, "y", false, { layersCount: 1, layer: 3 }); // U'
+							rotate(cubies, pivot, holder, "x", true, { layersCount: 1, layer: 3 }); // R
 						}, 2000);
 						setTimeout(() => {
-							rotate(cubies, pivot, holder, "x", true, { layersCount: 1, layer: 3 }); // R
+							rotate(cubies, pivot, holder, "y", true, { layersCount: 1, layer: 3 }); // U
 						}, 2250);
 						setTimeout(() => {
-							rotate(cubies, pivot, holder, "y", true, { layersCount: 1, layer: 3 }); // U
+							rotate(cubies, pivot, holder, "x", true, { layersCount: 1, layer: 3 }); // R
 						}, 2500);
 						setTimeout(() => {
-							rotate(cubies, pivot, holder, "x", false, { layersCount: 1, layer: 3 }); // R'
+							rotate(cubies, pivot, holder, "x", true, { layersCount: 1, layer: 3 }); // R
 						}, 2750);
 						setTimeout(() => {
-							rotate(cubies, pivot, holder, "y", false, { layersCount: 1, layer: 3 }); // U'
+							rotate(cubies, pivot, holder, "y", true, { layersCount: 1, layer: 3 }); // U
 						}, 3000);
 						setTimeout(() => {
 							rotate(cubies, pivot, holder, "x", true, { layersCount: 1, layer: 3 }); // R
 						}, 3250);
 						setTimeout(() => {
-							rotate(cubies, pivot, holder, "y", false, { layersCount: 1, layer: 3 }); // U'
+							rotate(cubies, pivot, holder, "x", true, { layersCount: 1, layer: 3 }); // R
 						}, 3500);
 						setTimeout(() => {
-							rotate(cubies, pivot, holder, "x", false, { layersCount: 1, layer: 3 }); // R'
+							rotate(cubies, pivot, holder, "y", true, { layersCount: 1, layer: 3 }); // U
 						}, 3750);
-
-						// SOLVE 1ST ALG
-
 						setTimeout(() => {
-							rotationSpeed = 60;
+							rotate(cubies, pivot, holder, "y", true, { layersCount: 1, layer: 3 }); // U
+						}, 4000);
+						setTimeout(() => {
+							rotate(cubies, pivot, holder, "x", false, { layersCount: 1, layer: 3 }); // R'
+						}, 4250);
+
+						// // SOLVE 4ST ALG
+						setTimeout(() => {
 							rotate(cubies, pivot, holder, "x", true, { layersCount: 1, layer: 3 }); // R
 						}, 5000);
 						setTimeout(() => {
-							rotate(cubies, pivot, holder, "y", true, { layersCount: 1, layer: 3 }); // U
+							rotate(cubies, pivot, holder, "y", true, { layersCount: 1, layer: 3 }); // U'
 						}, 6000);
 						setTimeout(() => {
-							rotate(cubies, pivot, holder, "x", false, { layersCount: 1, layer: 3 }); // R'
+							rotate(cubies, pivot, holder, "y", true, { layersCount: 1, layer: 3 }); // U'
 						}, 7000);
 						setTimeout(() => {
-							rotate(cubies, pivot, holder, "y", true, { layersCount: 1, layer: 3 }); // U
+							rotate(cubies, pivot, holder, "x", false, { layersCount: 1, layer: 3 }); // R'
 						}, 8000);
 						setTimeout(() => {
-							rotate(cubies, pivot, holder, "x", true, { layersCount: 1, layer: 3 }); // R
+							rotate(cubies, pivot, holder, "x", false, { layersCount: 1, layer: 3 }); // R'
 						}, 9000);
 						setTimeout(() => {
 							rotate(cubies, pivot, holder, "y", false, { layersCount: 1, layer: 3 }); // U'
 						}, 10000);
 						setTimeout(() => {
-							rotate(cubies, pivot, holder, "x", false, { layersCount: 1, layer: 3 }); // R'
+							rotate(cubies, pivot, holder, "x", true, { layersCount: 1, layer: 3 }); // R
 						}, 11000);
 						setTimeout(() => {
-							rotate(cubies, pivot, holder, "y", true, { layersCount: 1, layer: 3 }); // U
+							rotate(cubies, pivot, holder, "x", true, { layersCount: 1, layer: 3 }); // R
 						}, 12000);
 						setTimeout(() => {
-							rotate(cubies, pivot, holder, "x", true, { layersCount: 1, layer: 3 }); // R
+							rotate(cubies, pivot, holder, "y", false, { layersCount: 1, layer: 3 }); // U'
 						}, 13000);
 						setTimeout(() => {
-							rotate(cubies, pivot, holder, "y", true, { layersCount: 1, layer: 3 }); // U
+							rotate(cubies, pivot, holder, "x", false, { layersCount: 1, layer: 3 }); // R'
 						}, 14000);
 						setTimeout(() => {
-							rotate(cubies, pivot, holder, "y", true, { layersCount: 1, layer: 3 }); // U
+							rotate(cubies, pivot, holder, "x", false, { layersCount: 1, layer: 3 }); // R'
 						}, 15000);
 						setTimeout(() => {
-							rotate(cubies, pivot, holder, "x", false, { layersCount: 1, layer: 3 }); // R'
+							rotate(cubies, pivot, holder, "y", false, { layersCount: 1, layer: 3 }); // U'
 						}, 16000);
+						setTimeout(() => {
+							rotate(cubies, pivot, holder, "y", false, { layersCount: 1, layer: 3 }); // U'
+						}, 17000);
+						setTimeout(() => {
+							rotate(cubies, pivot, holder, "x", true, { layersCount: 1, layer: 3 }); // R
+						}, 18000);
 					});
 
 					// NOTATIONS normal
