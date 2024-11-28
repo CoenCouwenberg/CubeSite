@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Babylon.js Cube Coen - Improved Version</title>
+  <script src="https://preview.babylonjs.com/babylon.js"></script>
+  <link
+    rel="stylesheet"
+    href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+    crossorigin="anonymous"
+  />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: "Open Sans", sans-serif;
+      overflow: hidden;
+    }
+    #renderCanvas {
+      width: 100%;
+      height: 100%;
+    }
+    .alg {
+      font-size: 30px;
+      position: absolute;
+      left: 50%;
+      top: 90%;
+      transform: translate(-50%, -50%);
+      color: white;
+    }
+    .arrowBack, .resetButton, .click, .pauseButton, .stepButtons {
+      position: absolute;
+      font-size: 50px;
+      color: white;
+    }
+    .arrowBack {
+      left: 5%;
+      top: 5%;
+      transform: translate(-50%, -50%);
+    }
+    .resetButton {
+      right: 5%;
+      top: 1%;
+      transition: all 0.3s ease-in-out 0s;
+      transform-origin: center;
+    }
+    .resetButton:hover {
+      transform: rotate(-180deg);
+    }
+    .click {
+      left: 50%;
+      top: 10%;
+      transform: translate(-50%, -50%);
+      font-size: 40px;
+      animation-name: drag;
+      animation-duration: 20s;
+    }
+    .pauseButton {
+      right: 15%;
+      top: 5%;
+      cursor: pointer;
+    }
+    .stepButtons {
+      right: 5%;
+      bottom: 10%;
+    }
+    @keyframes drag {
+      0%, 40%, 80% { left: 40%; }
+      20%, 60% { left: 60%; }
+    }
+    .alg p {
+      display: inline;
+      transition: color 0.5s;
+    }
+    .alg p.highlight {
+      color: rgb(240, 216, 4);
+    }
+  </style>
+</head>
+<body>
+  <canvas id="renderCanvas"></canvas>
+
+  <div class="arrowBack">
+    <a href="https://cube.coencouwenberg.nl/#algSection">
+      <i class="fas fa-caret-left">Back</i>
+    </a>
+  </div>
+
+  <div class="resetButton">
+    <a href="./alg1.html">
+      <i class="fas fa-history"></i>
+    </a>
+  </div>
+
+  <div class="click">
+    <i class="fas fa-mouse-pointer"></i>
+  </div>
+
+  <div class="pauseButton" id="pauseButton">
+    <i class="fas fa-pause"></i>
+  </div>
+
+  <div class="stepButtons">
+    <button id="stepBack" style="font-size: 30px;">Step Back</button>
+    <button id="stepForward" style="font-size: 30px;">Step Forward</button>
+  </div>
+
+  <div class="alg" id="algDisplay"></div>
+
+  <script>
+    const canvas = document.getElementById("renderCanvas");
+    const engine = new BABYLON.Engine(canvas, true);
+    let scene, camera, pivot, cubies = [];
+    const algDisplay = document.getElementById("algDisplay");
+    let pause = false;
+    let currentIndex = 0;
+    let moves = [];
+    let isAnimating = false;
+
+    const initScene = () => {
+      scene = new BABYLON.Scene(engine);
+      camera = new BABYLON.ArcRotateCamera("camera", 0, 0, 10, BABYLON.Vector3.Zero(), scene);
+      camera.setPosition(new BABYLON.Vector3(5, 5, -5));
+      camera.attachControl(canvas, true);
+      camera.lowerRadiusLimit = camera.upperRadiusLimit = 10;
+
+      const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
+      light.intensity = 2;
+
+      const lightBottom = new BABYLON.DirectionalLight("lightBottom", new BABYLON.Vector3(0, -1, 0), scene);
+      lightBottom.intensity = 2;
+
+      const skybox = BABYLON.MeshBuilder.CreateBox("skyBox", { size: 100.0 }, scene);
+      const skyboxMaterial = new BABYLON.StandardMaterial("skyBoxMaterial", scene);
+      skyboxMaterial.backFaceCulling = false;
+      skyboxMaterial.disableLighting = true;
+      skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("../textures/skybox/skybox", scene);
+      skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+      skybox.material = skyboxMaterial;
+
+      cubies = createCubies(scene);
+    };
+
+    const createCubies = (scene) => {
+      const faceColors = [
+        BABYLON.Color4.FromHexString("#0066FFFF"), // Blauw
+        BABYLON.Color4.FromHexString("#33CC00FF"), // Groen
+        BABYLON.Color4.FromHexString("#FF9900FF"), // Oranje
+        BABYLON.Color4.FromHexString("#FF0000FF"), // Rood
+        BABYLON.Color4.FromHexString("#FFFF66FF"), // Geel
+        BABYLON.Color4.FromHexString("#FFFFFFFF")  // Wit
+      ];
+      let cubies = [];
+      for (let x = -1; x <= 1; x++) {
+        for (let y = -1; y <= 1; y++) {
+          for (let z = -1; z <= 1; z++) {
+            const cubie = BABYLON.MeshBuilder.CreateBox("cubie", {
+              faceColors: [...faceColors],
+              size: 0.98 // Slightly smaller to create visible gaps between cubies (like real Rubik's Cube borders)
+            }, scene);
+
+            // Create edges for a thin black border effect
+            const edgesRenderer = new BABYLON.EdgesRenderer(cubie, 0.5, true);
+            edgesRenderer.edgesWidthScaler = 0.3;
+            edgesRenderer.color = new BABYLON.Color4(0, 0, 0, 1);
+
+            cubie.position = new BABYLON.Vector3(x, y, z);
+            cubies.push(cubie);
+          }
+        }
+      }
+      return cubies;
+    };
+
+    const parseAlgorithm = (algorithm) => {
+      return algorithm.split(" ").map(move => ({
+        axis: move.match(/[RL]/) ? 'x' : move.match(/[UD]/) ? 'y' : 'z',
+        direction: move.includes("'") ? -1 : 1,
+        layer: move.match(/[RUF]/) ? 1 : -1
+      }));
+    };
+
+    const executeAlgorithm = (algorithm) => {
+      moves = parseAlgorithm(algorithm);
+      const algSteps = algorithm.split(" ").map(step => `<p>${step}&nbsp;</p>`).join("");
+      algDisplay.innerHTML = algSteps;
+      currentIndex = 0;
+      rotateNext();
+    };
+
+    const rotateNext = () => {
+      if (currentIndex >= moves.length || pause || isAnimating) return;
+      isAnimating = true;
+      const { axis, direction, layer } = moves[currentIndex];
+      const algItems = algDisplay.getElementsByTagName("p");
+      if (currentIndex > 0) algItems[currentIndex - 1].classList.remove("highlight");
+      algItems[currentIndex].classList.add("highlight");
+      rotateLayer(axis, direction, layer, () => {
+        currentIndex++;
+        isAnimating = false;
+        setTimeout(rotateNext, 500);
+      });
+    };
+
+    const rotateLayer = (axis, direction, layer, onComplete) => {
+      let cubiesToRotate = cubies.filter(cubie => {
+        return Math.round(cubie.position[axis]) === layer;
+      });
+      cubiesToRotate.forEach(cubie => cubie.setParent(pivot));
+      pivot.rotation = BABYLON.Vector3.Zero();
+      const angle = (Math.PI / 2) * direction;
+      BABYLON.Animation.CreateAndStartAnimation("rotate", pivot, `rotation.${axis}`, 60, 30, 0, angle, 0, null, () => {
+        cubiesToRotate.forEach(cubie => cubie.setParent(null));
+        pivot.rotation = BABYLON.Vector3.Zero();
+        onComplete();
+      });
+    };
+
+    document.getElementById("pauseButton").addEventListener("click", () => {
+      if (isAnimating) return;
+      pause = !pause;
+      const pauseIcon = document.getElementById("pauseButton").getElementsByTagName("i")[0];
+      if (pause) {
+        pauseIcon.classList.remove("fa-pause");
+        pauseIcon.classList.add("fa-play");
+      } else {
+        pauseIcon.classList.remove("fa-play");
+        pauseIcon.classList.add("fa-pause");
+        rotateNext();
+      }
+    });
+
+    document.getElementById("stepBack").addEventListener("click", () => {
+      if (isAnimating || currentIndex <= 0) return;
+      currentIndex--;
+      isAnimating = true;
+      const { axis, direction, layer } = moves[currentIndex];
+      rotateLayer(axis, -direction, layer, () => {
+        isAnimating = false;
+        const algItems = algDisplay.getElementsByTagName("p");
+        algItems[currentIndex].classList.remove("highlight");
+        if (currentIndex > 0) algItems[currentIndex - 1].classList.add("highlight");
+      });
+    });
+
+    document.getElementById("stepForward").addEventListener("click", () => {
+      if (isAnimating || currentIndex >= moves.length) return;
+      isAnimating = true;
+      const { axis, direction, layer } = moves[currentIndex];
+      const algItems = algDisplay.getElementsByTagName("p");
+      if (currentIndex > 0) algItems[currentIndex - 1].classList.remove("highlight");
+      algItems[currentIndex].classList.add("highlight");
+      rotateLayer(axis, direction, layer, () => {
+        currentIndex++;
+        isAnimating = false;
+      });
+    });
+
+    initScene();
+    pivot = new BABYLON.TransformNode("pivot", scene);
+    executeAlgorithm("R U R' U R U2' R'");
+    engine.runRenderLoop(() => scene.render());
+    window.addEventListener("resize", () => engine.resize());
+  </script>
+</body>
+</html>
