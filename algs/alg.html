@@ -261,6 +261,11 @@
 					cubiesToRotate.forEach((cubie) => cubie.setParent(pivot));
 					pivot.rotation = BABYLON.Vector3.Zero();
 
+					const snapAngle = (value) => {
+						const quarterTurn = Math.PI / 2;
+						return Math.round(value / quarterTurn) * quarterTurn;
+					};
+
 					BABYLON.Animation.CreateAndStartAnimation(
 						"rotate",
 						pivot,
@@ -277,6 +282,9 @@
 								cubie.position.x = Math.round(cubie.position.x);
 								cubie.position.y = Math.round(cubie.position.y);
 								cubie.position.z = Math.round(cubie.position.z);
+								cubie.rotation.x = snapAngle(cubie.rotation.x);
+								cubie.rotation.y = snapAngle(cubie.rotation.y);
+								cubie.rotation.z = snapAngle(cubie.rotation.z);
 								cubie.setParent(holder);
 							});
 							pivot.rotation = BABYLON.Vector3.Zero();
