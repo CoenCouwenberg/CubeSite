@@ -105,14 +105,6 @@
 			.algorithm-display span.active {
 				color: #f0d804;
 			}
-			.version-note {
-				position: absolute;
-				left: 16px;
-				bottom: 12px;
-				font-size: 12px;
-				color: rgba(255, 255, 255, 0.6);
-				letter-spacing: 0.5px;
-			}
 		</style>
 	</head>
 	<body>
@@ -135,7 +127,6 @@
 				</button>
 			</div>
 			<div class="algorithm-display" id="algorithmDisplay"></div>
-			<div class="version-note">Version: v0.3.0</div>
 		</div>
 
 		<script>
@@ -267,14 +258,7 @@
 						(cubie) => Math.round(cubie.position[axis]) === layer
 					);
 
-					scene.stopAnimation(pivot);
-					pivot.rotation = BABYLON.Vector3.Zero();
-					pivot.position = BABYLON.Vector3.Zero();
-
-					cubiesToRotate.forEach((cubie) => {
-						cubie.computeWorldMatrix(true);
-						cubie.setParent(pivot, true);
-					});
+					cubiesToRotate.forEach((cubie) => cubie.setParent(pivot));
 					pivot.rotation = BABYLON.Vector3.Zero();
 
 					const snapAngle = (value) => {
@@ -294,15 +278,14 @@
 						null,
 						() => {
 							cubiesToRotate.forEach((cubie) => {
-								cubie.computeWorldMatrix(true);
-								cubie.setParent(null, true);
+								cubie.setParent(null);
 								cubie.position.x = Math.round(cubie.position.x);
 								cubie.position.y = Math.round(cubie.position.y);
 								cubie.position.z = Math.round(cubie.position.z);
 								cubie.rotation.x = snapAngle(cubie.rotation.x);
 								cubie.rotation.y = snapAngle(cubie.rotation.y);
 								cubie.rotation.z = snapAngle(cubie.rotation.z);
-								cubie.setParent(holder, true);
+								cubie.setParent(holder);
 							});
 							pivot.rotation = BABYLON.Vector3.Zero();
 							resolve();
@@ -349,19 +332,10 @@
 				if (isAnimating) return;
 				isAnimating = true;
 				isPaused = false;
-				scene.stopAnimation(pivot);
 				const setupMoves = invertMoves(moveQueue);
 				await playMoves(setupMoves, { speed: 120, highlight: false });
 				await playMoves(moveQueue, { speed: 60, highlight: true });
 				isAnimating = false;
-			};
-
-			const resetCube = () => {
-				cubies.forEach((cubie) => cubie.dispose());
-				cubies = createCubies(scene);
-				pivot.rotation = BABYLON.Vector3.Zero();
-				holder.rotation = BABYLON.Vector3.Zero();
-				scene.stopAnimation(pivot);
 			};
 
 			const readAlgorithmFromQuery = () => {
@@ -391,9 +365,7 @@
 			});
 
 			restartPlayback.addEventListener("click", () => {
-				isAnimating = false;
-				isPaused = false;
-				resetCube();
+				if (isAnimating) return;
 				initializeAlgorithm();
 			});
 
