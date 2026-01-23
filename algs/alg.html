@@ -120,7 +120,7 @@
 			</div>
 			<div class="controls">
 				<button class="control-button" id="togglePlayback">
-					<i class="fas fa-pause"></i>
+					<i class="fas fa-play"></i>
 				</button>
 				<button class="control-button" id="restartPlayback">
 					<i class="fas fa-history"></i>
@@ -145,7 +145,10 @@
 			let moveQueue = [];
 			let isPaused = false;
 			let isAnimating = false;
+			let isScrambled = false;
+			let isPlayingForward = false;
 			let currentSpeed = 60;
+			let activeRunId = 0;
 
 			const DEFAULT_ALGORITHM = "R U R' U R U2 R'";
 
@@ -209,12 +212,23 @@
 								scene
 							);
 							cubie.position = new BABYLON.Vector3(x, y, z);
+							cubie.metadata = { initialPosition: cubie.position.clone() };
 							cubie.setParent(holder);
 							cubes.push(cubie);
 						}
 					}
 				}
 				return cubes;
+			};
+
+			const resetCube = () => {
+				cubies.forEach((cubie) => {
+					cubie.setParent(holder);
+					const { initialPosition } = cubie.metadata;
+					cubie.position.copyFrom(initialPosition);
+					cubie.rotation = BABYLON.Vector3.Zero();
+				});
+				pivot.rotation = BABYLON.Vector3.Zero();
 			};
 
 			const parseAlgorithm = (algorithm) => {
@@ -306,15 +320,17 @@
 				if (spans[index]) spans[index].classList.add("active");
 			};
 
-			const playMoves = async (moves, { speed, highlight }) => {
+			const playMoves = async (moves, { speed, highlight, runId }) => {
 				currentSpeed = speed;
 				for (let index = 0; index < moves.length; index++) {
-					while (isPaused) {
+					while (isPaused && runId === activeRunId) {
 						await new Promise((resolve) => setTimeout(resolve, 100));
 					}
+					if (runId !== activeRunId) return;
 					if (highlight) setActiveMove(index);
 					const rotation = moveToRotation(moves[index]);
 					await rotateLayer(rotation.axis, rotation.layer, rotation.angle);
+					if (runId !== activeRunId) return;
 				}
 				if (highlight) setActiveMove(-1);
 			};
@@ -328,14 +344,43 @@
 					}));
 			};
 
-			const startPlayback = async () => {
-				if (isAnimating) return;
+			const updateToggleIcon = () => {
+				const icon = togglePlayback.querySelector("i");
+				const showPlay = !isPlayingForward || isPaused;
+				icon.classList.toggle("fa-play", showPlay);
+				icon.classList.toggle("fa-pause", !showPlay);
+			};
+
+			const scrambleCube = async () => {
+				const runId = ++activeRunId;
 				isAnimating = true;
+				isScrambled = false;
+				isPlayingForward = false;
 				isPaused = false;
 				const setupMoves = invertMoves(moveQueue);
-				await playMoves(setupMoves, { speed: 120, highlight: false });
-				await playMoves(moveQueue, { speed: 60, highlight: true });
+				togglePlayback.disabled = true;
+				updateToggleIcon();
+				await playMoves(setupMoves, { speed: 120, highlight: false, runId });
+				if (runId !== activeRunId) return;
 				isAnimating = false;
+				isScrambled = true;
+				togglePlayback.disabled = false;
+				updateToggleIcon();
+			};
+
+			const playForward = async () => {
+				if (isAnimating || !isScrambled) return;
+				const runId = ++activeRunId;
+				isAnimating = true;
+				isPlayingForward = true;
+				isPaused = false;
+				updateToggleIcon();
+				await playMoves(moveQueue, { speed: 60, highlight: true, runId });
+				if (runId !== activeRunId) return;
+				isAnimating = false;
+				isPlayingForward = false;
+				isPaused = false;
+				updateToggleIcon();
 			};
 
 			const readAlgorithmFromQuery = () => {
@@ -350,7 +395,9 @@
 					algTitle.textContent = `Algorithm: ${algorithm}`;
 					moveQueue = parseAlgorithm(algorithm);
 					updateAlgorithmDisplay(moveQueue);
-					startPlayback();
+					setActiveMove(-1);
+					resetCube();
+					scrambleCube();
 				} catch (error) {
 					algTitle.textContent = "Algorithm error";
 					algorithmDisplay.textContent = error.message;
@@ -358,14 +405,22 @@
 			};
 
 			togglePlayback.addEventListener("click", () => {
+				if (!isScrambled) return;
+				if (!isPlayingForward) {
+					playForward();
+					return;
+				}
 				isPaused = !isPaused;
-				const icon = togglePlayback.querySelector("i");
-				icon.classList.toggle("fa-pause", !isPaused);
-				icon.classList.toggle("fa-play", isPaused);
+				updateToggleIcon();
 			});
 
 			restartPlayback.addEventListener("click", () => {
-				if (isAnimating) return;
+				activeRunId += 1;
+				isPaused = false;
+				isAnimating = false;
+				isPlayingForward = false;
+				isScrambled = false;
+				updateToggleIcon();
 				initializeAlgorithm();
 			});
 
