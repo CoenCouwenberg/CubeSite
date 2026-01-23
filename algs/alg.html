@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Algorithm Trainer - Dynamic</title>
+		<script src="https://preview.babylonjs.com/babylon.js"></script>
+		<link
+			rel="stylesheet"
+			href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css"
+			crossorigin="anonymous"
+		/>
+		<link
+			href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&display=swap"
+			rel="stylesheet"
+		/>
+		<style>
+			html,
+			body {
+				width: 100%;
+				height: 100%;
+				margin: 0;
+				padding: 0;
+				font-family: "Open Sans", sans-serif;
+				overflow: hidden;
+				background: #000;
+			}
+			#renderCanvas {
+				width: 100%;
+				height: 100%;
+				touch-action: none;
+			}
+			.ui {
+				position: absolute;
+				inset: 0;
+				pointer-events: none;
+				color: white;
+			}
+			.header {
+				position: absolute;
+				left: 50%;
+				top: 6%;
+				transform: translate(-50%, -50%);
+				text-align: center;
+				text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+			}
+			.header h1 {
+				margin: 0;
+				font-size: 32px;
+			}
+			.header p {
+				margin: 6px 0 0;
+				font-size: 16px;
+				opacity: 0.8;
+			}
+			.controls {
+				position: absolute;
+				right: 4%;
+				top: 6%;
+				display: flex;
+				gap: 12px;
+				align-items: center;
+				pointer-events: auto;
+			}
+			.control-button {
+				background: rgba(0, 0, 0, 0.5);
+				border: 1px solid rgba(255, 255, 255, 0.2);
+				color: white;
+				padding: 10px 14px;
+				border-radius: 8px;
+				cursor: pointer;
+				font-size: 16px;
+			}
+			.control-button:disabled {
+				opacity: 0.5;
+				cursor: not-allowed;
+			}
+			.arrowBack {
+				position: absolute;
+				left: 5%;
+				top: 6%;
+				transform: translate(-50%, -50%);
+				font-size: 24px;
+				pointer-events: auto;
+			}
+			.arrowBack a {
+				color: white;
+				text-decoration: none;
+			}
+			.algorithm-display {
+				position: absolute;
+				left: 50%;
+				bottom: 8%;
+				transform: translate(-50%, 50%);
+				font-size: 28px;
+				text-align: center;
+				pointer-events: none;
+				letter-spacing: 1px;
+			}
+			.algorithm-display span {
+				display: inline-block;
+				padding: 0 4px;
+				transition: color 0.3s ease;
+			}
+			.algorithm-display span.active {
+				color: #f0d804;
+			}
+			.version-note {
+				position: absolute;
+				left: 16px;
+				bottom: 12px;
+				font-size: 12px;
+				color: rgba(255, 255, 255, 0.6);
+				letter-spacing: 0.5px;
+			}
+		</style>
+	</head>
+	<body>
+		<canvas id="renderCanvas"></canvas>
+
+		<div class="ui">
+			<div class="arrowBack">
+				<a href="../index.html#algSection"><i class="fas fa-caret-left"></i> Back</a>
+			</div>
+			<div class="header">
+				<h1 id="algTitle">Algorithm demo</h1>
+				<p>Drag to orbit the cube while the moves play.</p>
+			</div>
+			<div class="controls">
+				<button class="control-button" id="togglePlayback">
+					<i class="fas fa-pause"></i>
+				</button>
+				<button class="control-button" id="restartPlayback">
+					<i class="fas fa-history"></i>
+				</button>
+			</div>
+			<div class="algorithm-display" id="algorithmDisplay"></div>
+			<div class="version-note">Version: v0.3.0</div>
+		</div>
+
+		<script>
+			const canvas = document.getElementById("renderCanvas");
+			const engine = new BABYLON.Engine(canvas, true);
+			const algorithmDisplay = document.getElementById("algorithmDisplay");
+			const togglePlayback = document.getElementById("togglePlayback");
+			const restartPlayback = document.getElementById("restartPlayback");
+			const algTitle = document.getElementById("algTitle");
+
+			let scene;
+			let camera;
+			let pivot;
+			let holder;
+			let cubies = [];
+			let moveQueue = [];
+			let isPaused = false;
+			let isAnimating = false;
+			let currentSpeed = 60;
+
+			const DEFAULT_ALGORITHM = "R U R' U R U2 R'";
+
+			const initScene = () => {
+				scene = new BABYLON.Scene(engine);
+				camera = new BABYLON.ArcRotateCamera(
+					"camera",
+					0,
+					0,
+					10,
+					BABYLON.Vector3.Zero(),
+					scene
+				);
+				camera.setPosition(new BABYLON.Vector3(5, 5, -5));
+				camera.attachControl(canvas, true);
+				camera.lowerRadiusLimit = 10;
+				camera.upperRadiusLimit = 10;
+
+				const light = new BABYLON.HemisphericLight(
+					"light",
+					new BABYLON.Vector3(0, 1, 0),
+					scene
+				);
+				light.intensity = 2;
+
+				const skybox = BABYLON.MeshBuilder.CreateBox("skyBox", { size: 100.0 }, scene);
+				const skyboxMaterial = new BABYLON.StandardMaterial("skyBoxMaterial", scene);
+				skyboxMaterial.backFaceCulling = false;
+				skyboxMaterial.disableLighting = true;
+				skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture(
+					"../textures/skybox/skybox",
+					scene
+				);
+				skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+				skybox.material = skyboxMaterial;
+
+				holder = new BABYLON.TransformNode("holder", scene);
+				pivot = new BABYLON.TransformNode("pivot", scene);
+				cubies = createCubies(scene);
+			};
+
+			const createCubies = (scene) => {
+				const faceColors = [
+					BABYLON.Color4.FromHexString("#0066FFFF"),
+					BABYLON.Color4.FromHexString("#33CC00FF"),
+					BABYLON.Color4.FromHexString("#FF9900FF"),
+					BABYLON.Color4.FromHexString("#FF0000FF"),
+					BABYLON.Color4.FromHexString("#FFFF66FF"),
+					BABYLON.Color4.FromHexString("#FFFFFFFF"),
+				];
+				const cubes = [];
+				for (let x = -1; x <= 1; x++) {
+					for (let y = -1; y <= 1; y++) {
+						for (let z = -1; z <= 1; z++) {
+							const cubie = BABYLON.MeshBuilder.CreateBox(
+								"cubie",
+								{
+									faceColors: [...faceColors],
+									size: 0.98,
+								},
+								scene
+							);
+							cubie.position = new BABYLON.Vector3(x, y, z);
+							cubie.setParent(holder);
+							cubes.push(cubie);
+						}
+					}
+				}
+				return cubes;
+			};
+
+			const parseAlgorithm = (algorithm) => {
+				const tokens = algorithm
+					.split(/\s+/)
+					.map((token) => token.trim())
+					.filter(Boolean);
+
+				return tokens.map((token) => {
+					const match = token.match(/^([RULDFB])([2]?)(['`]?)$/i);
+					if (!match) {
+						throw new Error(`Invalid move: ${token}`);
+					}
+					const face = match[1].toUpperCase();
+					const isDouble = match[2] === "2";
+					const isPrime = match[3] === "'" || match[3] === "`";
+					return { face, isDouble, isPrime, raw: token };
+				});
+			};
+
+			const moveToRotation = (move) => {
+				const faceMap = {
+					R: { axis: "x", layer: 1, invert: false },
+					L: { axis: "x", layer: -1, invert: true },
+					U: { axis: "y", layer: 1, invert: false },
+					D: { axis: "y", layer: -1, invert: true },
+					F: { axis: "z", layer: 1, invert: false },
+					B: { axis: "z", layer: -1, invert: true },
+				};
+
+				const { axis, layer, invert } = faceMap[move.face];
+				let direction = move.isPrime ? -1 : 1;
+				if (invert) direction *= -1;
+				const angle = move.isDouble ? Math.PI : (Math.PI / 2) * direction;
+				return { axis, layer, angle };
+			};
+
+			const rotateLayer = (axis, layer, angle) => {
+				return new Promise((resolve) => {
+					const cubiesToRotate = cubies.filter(
+						(cubie) => Math.round(cubie.position[axis]) === layer
+					);
+
+					scene.stopAnimation(pivot);
+					pivot.rotation = BABYLON.Vector3.Zero();
+					pivot.position = BABYLON.Vector3.Zero();
+
+					cubiesToRotate.forEach((cubie) => {
+						cubie.computeWorldMatrix(true);
+						cubie.setParent(pivot, true);
+					});
+					pivot.rotation = BABYLON.Vector3.Zero();
+
+					const snapAngle = (value) => {
+						const quarterTurn = Math.PI / 2;
+						return Math.round(value / quarterTurn) * quarterTurn;
+					};
+
+					BABYLON.Animation.CreateAndStartAnimation(
+						"rotate",
+						pivot,
+						`rotation.${axis}`,
+						currentSpeed,
+						30,
+						0,
+						angle,
+						0,
+						null,
+						() => {
+							cubiesToRotate.forEach((cubie) => {
+								cubie.computeWorldMatrix(true);
+								cubie.setParent(null, true);
+								cubie.position.x = Math.round(cubie.position.x);
+								cubie.position.y = Math.round(cubie.position.y);
+								cubie.position.z = Math.round(cubie.position.z);
+								cubie.rotation.x = snapAngle(cubie.rotation.x);
+								cubie.rotation.y = snapAngle(cubie.rotation.y);
+								cubie.rotation.z = snapAngle(cubie.rotation.z);
+								cubie.setParent(holder, true);
+							});
+							pivot.rotation = BABYLON.Vector3.Zero();
+							resolve();
+						}
+					);
+				});
+			};
+
+			const updateAlgorithmDisplay = (moves) => {
+				algorithmDisplay.innerHTML = moves
+					.map((move) => `<span>${move.raw}</span>`)
+					.join(" ");
+			};
+
+			const setActiveMove = (index) => {
+				const spans = algorithmDisplay.querySelectorAll("span");
+				spans.forEach((span) => span.classList.remove("active"));
+				if (spans[index]) spans[index].classList.add("active");
+			};
+
+			const playMoves = async (moves, { speed, highlight }) => {
+				currentSpeed = speed;
+				for (let index = 0; index < moves.length; index++) {
+					while (isPaused) {
+						await new Promise((resolve) => setTimeout(resolve, 100));
+					}
+					if (highlight) setActiveMove(index);
+					const rotation = moveToRotation(moves[index]);
+					await rotateLayer(rotation.axis, rotation.layer, rotation.angle);
+				}
+				if (highlight) setActiveMove(-1);
+			};
+
+			const invertMoves = (moves) => {
+				return [...moves]
+					.reverse()
+					.map((move) => ({
+						...move,
+						isPrime: move.isDouble ? move.isPrime : !move.isPrime,
+					}));
+			};
+
+			const startPlayback = async () => {
+				if (isAnimating) return;
+				isAnimating = true;
+				isPaused = false;
+				scene.stopAnimation(pivot);
+				const setupMoves = invertMoves(moveQueue);
+				await playMoves(setupMoves, { speed: 120, highlight: false });
+				await playMoves(moveQueue, { speed: 60, highlight: true });
+				isAnimating = false;
+			};
+
+			const resetCube = () => {
+				cubies.forEach((cubie) => cubie.dispose());
+				cubies = createCubies(scene);
+				pivot.rotation = BABYLON.Vector3.Zero();
+				holder.rotation = BABYLON.Vector3.Zero();
+				scene.stopAnimation(pivot);
+			};
+
+			const readAlgorithmFromQuery = () => {
+				const params = new URLSearchParams(window.location.search);
+				const alg = params.get("alg");
+				return alg ? decodeURIComponent(alg).trim() : DEFAULT_ALGORITHM;
+			};
+
+			const initializeAlgorithm = () => {
+				try {
+					const algorithm = readAlgorithmFromQuery();
+					algTitle.textContent = `Algorithm: ${algorithm}`;
+					moveQueue = parseAlgorithm(algorithm);
+					updateAlgorithmDisplay(moveQueue);
+					startPlayback();
+				} catch (error) {
+					algTitle.textContent = "Algorithm error";
+					algorithmDisplay.textContent = error.message;
+				}
+			};
+
+			togglePlayback.addEventListener("click", () => {
+				isPaused = !isPaused;
+				const icon = togglePlayback.querySelector("i");
+				icon.classList.toggle("fa-pause", !isPaused);
+				icon.classList.toggle("fa-play", isPaused);
+			});
+
+			restartPlayback.addEventListener("click", () => {
+				isAnimating = false;
+				isPaused = false;
+				resetCube();
+				initializeAlgorithm();
+			});
+
+			initScene();
+			initializeAlgorithm();
+
+			engine.runRenderLoop(() => scene.render());
+			window.addEventListener("resize", () => engine.resize());
+		</script>
+	</body>
+</html>
