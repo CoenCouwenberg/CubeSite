@@ -256,577 +256,343 @@
 			});
 		</script>
 		<script>
-			const ollAlgorithms = [
+			const ollGroups = [
 				{
-					number: 29,
-					name: "Awkward Shape",
-					group: "Awkward Shape",
-					algorithm: "R U R' U' R U' R' F' U' F R U R'",
+					name: "All Edges Oriented",
+					cases: [
+						{ number: 21, algorithm: "R U2 R' U' R U R' U' R U' R'" },
+						{ number: 22, algorithm: "R U2 R2 U' R2 U' R2 U2 R" },
+						{ number: 23, algorithm: "R2 D' R U2 R' D R U2 R" },
+						{ number: 24, algorithm: "(r U R' U') (r' F R F')" },
+						{ number: 25, algorithm: "(F' r U R' U') (r' F R)" },
+						{ number: 26, algorithm: "R U2 R' U' R U' R'" },
+						{ number: 27, algorithm: "R U R' U R U2 R'" },
+					],
 				},
 				{
-					number: 30,
-					name: "Awkward Shape",
-					group: "Awkward Shape",
-					algorithm: "F R' F R2 U' R' U' R U R' F2",
+					name: "All Corners Oriented",
+					cases: [
+						{ number: 28, algorithm: "(r U R' U') (r' R U R U' R')" },
+						{ number: 57, algorithm: "(R U R' U') (M' U R U' r')" },
+					],
 				},
 				{
-					number: 41,
-					name: "Awkward Shape",
-					group: "Awkward Shape",
-					algorithm: "R U R' U R U2 R' F R U R' U' F'",
+					name: "T Shapes",
+					cases: [
+						{ number: 33, algorithm: "(R U R' U') (R' F R F')" },
+						{ number: 45, algorithm: "F (R U R' U') F'" },
+					],
 				},
 				{
-					number: 42,
-					name: "Awkward Shape",
-					group: "Awkward Shape",
-					algorithm: "R' U' R U' R' U2 R F R U R' U' F'",
+					name: "W Shapes",
+					cases: [
+						{ number: 36, algorithm: "L' U' L U' L' U L U L F' L' F" },
+						{ number: 38, algorithm: "R U R' U R U' R' U' R' F R F'" },
+						{ number: 35, algorithm: "R U2 (R2 F R F') U2 R'" },
+						{ number: 37, algorithm: "(F R' F') (R U R U' R')" },
+					],
 				},
 				{
-					number: 39,
-					name: "Big Lightning Bolt",
-					group: "Big Lightning Bolt",
-					algorithm: "L F' L' U' L U F U' L'",
+					name: "Square Shapes",
+					cases: [
+						{ number: 5, algorithm: "l' U2 L U L' U l" },
+						{ number: 6, algorithm: "r U2 R' U' R U' r'" },
+					],
 				},
 				{
-					number: 40,
-					name: "Big Lightning Bolt",
-					group: "Big Lightning Bolt",
-					algorithm: "R' F R U R' U' F' U R",
+					name: "P Shapes",
+					cases: [
+						{ number: 31, algorithm: "R' U' F (U R U' R') F' R" },
+						{ number: 32, algorithm: "L U F' (U' L' U L) F L'" },
+						{ number: 43, algorithm: "R' U' F' U F R" },
+						{ number: 44, algorithm: "F (U R U' R') F'" },
+					],
 				},
 				{
-					number: 34,
-					name: "C Shape",
-					group: "C Shape",
-					algorithm: "R U R2 U' R' F R U R U' F'",
+					name: "Fish Shapes",
+					cases: [
+						{ number: 9, algorithm: "(R U R' U') R' F (R2 U R' U') F'" },
+						{ number: 10, algorithm: "R U R' U R' F R F' R U2 R'" },
+					],
 				},
 				{
-					number: 46,
-					name: "C Shape",
-					group: "C Shape",
-					algorithm: "R' U' R' F R F' U R",
+					name: "C Shapes",
+					cases: [
+						{ number: 34, algorithm: "R U R2 U' R' F R U R U' F'" },
+						{ number: 46, algorithm: "R' U' R' F R F' U R" },
+					],
 				},
 				{
-					number: 28,
-					name: "Corners Oriented",
-					group: "Corners Oriented",
-					algorithm: "r U R' U' r' R U R U' R'",
+					name: "Small Lightning Bolts",
+					cases: [
+						{ number: 7, algorithm: "r U R' U R U2 r'" },
+						{ number: 8, algorithm: "l' U' L U' L' U2 l" },
+						{ number: 11, algorithm: "S' U2 R U R' U R U2 R' S" },
+						{ number: 12, algorithm: "M' R' U' R U' R' U2 R U' R' r'" },
+					],
 				},
 				{
-					number: 57,
-					name: "Corners Oriented",
-					group: "Corners Oriented",
-					algorithm: "R U R' U' M' U R U' r'",
+					name: "Big Lightning Bolts",
+					cases: [
+						{ number: 39, algorithm: "(f' L F L') (U' L' U L) S" },
+						{ number: 40, algorithm: "(f R' F' R) (U R U' R') S'" },
+					],
 				},
 				{
-					number: 21,
-					name: "Cross",
-					group: "Cross",
-					algorithm: "R U2 R' U' R U R' U' R U' R'",
+					name: "Small L Shapes",
+					cases: [
+						{ number: 47, algorithm: "(F R' F') U2 R U' R' U R U2 R'" },
+						{ number: 48, algorithm: "F (R U R' U') (R U R' U') F'" },
+						{ number: 49, algorithm: "r U' r2 U r2 U r2 U' r" },
+						{ number: 50, algorithm: "l' U l2 U' l2 U' l2 U l'" },
+						{ number: 53, algorithm: "l' U2 L U L' U' L U L' U l" },
+						{ number: 54, algorithm: "r U2 R' U' R U R' U' R U' r'" },
+					],
 				},
 				{
-					number: 22,
-					name: "Cross",
-					group: "Cross",
-					algorithm: "R U2 R2 U' R2 U' R2 U2 R",
+					name: "Knight Move Shapes",
+					cases: [
+						{ number: 13, algorithm: "F (U R U' R2) F' R (U R U' R')" },
+						{ number: 14, algorithm: "R' F R U R' F' R F U' F'" },
+						{ number: 15, algorithm: "l' U' l (L' U' L U) l' U l" },
+						{ number: 16, algorithm: "r U r' (R U R' U') r U' r'" },
+					],
 				},
 				{
-					number: 23,
-					name: "Cross",
-					group: "Cross",
-					algorithm: "R2 D' R U2 R' D R U2 R",
+					name: "I Shapes",
+					cases: [
+						{ number: 51, algorithm: "F (U R U' R') (U R U' R') F'" },
+						{ number: 52, algorithm: "R' F' U' F U R U' R' U R" },
+						{ number: 55, algorithm: "R' F R U R U' R2 F' R2 U' R' U R U R'" },
+						{ number: 56, algorithm: "r U r' U R U' R' U R U2 r'" },
+					],
 				},
 				{
-					number: 24,
-					name: "Cross",
-					group: "Cross",
-					algorithm: "r U R' U' r' F R F'",
+					name: "Cactus Shapes",
+					cases: [
+						{ number: 29, algorithm: "l D' l' D l D' l' D2 l" },
+						{ number: 30, algorithm: "F R' F R2 U' R' U' R U R' F2" },
+						{ number: 41, algorithm: "R U R' U R U2 R' F (R U R' U') F'" },
+						{ number: 42, algorithm: "R' U' R U' R' U2 R F (R U R' U') F'" },
+					],
 				},
 				{
-					number: 25,
-					name: "Cross",
-					group: "Cross",
-					algorithm: "F' r U R' U' r' F R",
-				},
-				{
-					number: 26,
-					name: "Cross",
-					group: "Cross",
-					algorithm: "R U2 R' U' R U' R'",
-				},
-				{
-					number: 27,
-					name: "Cross",
-					group: "Cross",
-					algorithm: "R U R' U R U2 R'",
-				},
-				{
-					number: 1,
-					name: "Dot",
-					group: "Dot",
-					algorithm: "R U2 R2 F R F' U2 R' F R F'",
-				},
-				{
-					number: 2,
-					name: "Dot",
-					group: "Dot",
-					algorithm: "r U r' U2 r U2 R' U2 R U' r'",
-				},
-				{
-					number: 3,
-					name: "Dot",
-					group: "Dot",
-					algorithm: "r' R2 U R' U r U2 r' U M'",
-				},
-				{
-					number: 4,
-					name: "Dot",
-					group: "Dot",
-					algorithm: "M U' r U2 r' U' R U' R' M'",
-				},
-				{
-					number: 17,
-					name: "Dot",
-					group: "Dot",
-					algorithm: "F R' F' R2 r' U R U' R' U' M'",
-				},
-				{
-					number: 18,
-					name: "Dot",
-					group: "Dot",
-					algorithm: "r U R' U R U2 r2 U' R U' R' U2 r",
-				},
-				{
-					number: 19,
-					name: "Dot",
-					group: "Dot",
-					algorithm: "r' R U R U R' U' M' R' F R F'",
-				},
-				{
-					number: 20,
-					name: "Dot",
-					group: "Dot",
-					algorithm: "r U R' U' M2 U R U' R' U' M'",
-				},
-				{
-					number: 9,
-					name: "Fish Shape",
-					group: "Fish Shape",
-					algorithm: "R U R' U' R' F R2 U R' U' F'",
-				},
-				{
-					number: 10,
-					name: "Fish Shape",
-					group: "Fish Shape",
-					algorithm: "R U R' U R' F R F' R U2 R'",
-				},
-				{
-					number: 35,
-					name: "Fish Shape",
-					group: "Fish Shape",
-					algorithm: "R U2 R2 F R F' R U2 R'",
-				},
-				{
-					number: 37,
-					name: "Fish Shape",
-					group: "Fish Shape",
-					algorithm: "F R' F' R U R U' R'",
-				},
-				{
-					number: 51,
-					name: "I Shape",
-					group: "I Shape",
-					algorithm: "F U R U' R' U R U' R' F'",
-				},
-				{
-					number: 52,
-					name: "I Shape",
-					group: "I Shape",
-					algorithm: "R U R' U R U' B U' B' R'",
-				},
-				{
-					number: 55,
-					name: "I Shape",
-					group: "I Shape",
-					algorithm: "R' F R U R U' R2 F' R2 U' R' U R U R'",
-				},
-				{
-					number: 56,
-					name: "I Shape",
-					group: "I Shape",
-					algorithm: "r' U' r U' R' U R U' R' U R r' U r",
-				},
-				{
-					number: 13,
-					name: "Knight Move Shape",
-					group: "Knight Move Shape",
-					algorithm: "F U R U' R2 F' R U R U' R'",
-				},
-				{
-					number: 14,
-					name: "Knight Move Shape",
-					group: "Knight Move Shape",
-					algorithm: "R' F R U R' F' R F U' F'",
-				},
-				{
-					number: 15,
-					name: "Knight Move Shape",
-					group: "Knight Move Shape",
-					algorithm: "l' U' l L' U' L U l' U l",
-				},
-				{
-					number: 16,
-					name: "Knight Move Shape",
-					group: "Knight Move Shape",
-					algorithm: "r U r' R U R' U' r U' r'",
-				},
-				{
-					number: 31,
-					name: "P Shape",
-					group: "P Shape",
-					algorithm: "R' U' F U R U' R' F' R",
-				},
-				{
-					number: 32,
-					name: "P Shape",
-					group: "P Shape",
-					algorithm: "L U F' U' L' U L F L'",
-				},
-				{
-					number: 43,
-					name: "P Shape",
-					group: "P Shape",
-					algorithm: "F' U' L' U L F",
-				},
-				{
-					number: 44,
-					name: "P Shape",
-					group: "P Shape",
-					algorithm: "F U R U' R' F'",
-				},
-				{
-					number: 47,
-					name: "Small L Shape",
-					group: "Small L Shape",
-					algorithm: "R' U' R' F R F' R' F R F' U R",
-				},
-				{
-					number: 48,
-					name: "Small L Shape",
-					group: "Small L Shape",
-					algorithm: "F R U R' U' R U R' U' F'",
-				},
-				{
-					number: 49,
-					name: "Small L Shape",
-					group: "Small L Shape",
-					algorithm: "r U' r2 U r2 U r2 U' r",
-				},
-				{
-					number: 50,
-					name: "Small L Shape",
-					group: "Small L Shape",
-					algorithm: "r' U r2 U' r2 U' r2 U r'",
-				},
-				{
-					number: 53,
-					name: "Small L Shape",
-					group: "Small L Shape",
-					algorithm: "l' U2 L U L' U' L U L' U l",
-				},
-				{
-					number: 54,
-					name: "Small L Shape",
-					group: "Small L Shape",
-					algorithm: "r U2 R' U' R U R' U' R U' r'",
-				},
-				{
-					number: 7,
-					name: "Small Lightning Bolt",
-					group: "Small Lightning Bolt",
-					algorithm: "r U R' U R U2 r'",
-				},
-				{
-					number: 8,
-					name: "Small Lightning Bolt",
-					group: "Small Lightning Bolt",
-					algorithm: "l' U' L U' L' U2 l",
-				},
-				{
-					number: 11,
-					name: "Small Lightning Bolt",
-					group: "Small Lightning Bolt",
-					algorithm: "r U R' U R' F R F' R U2 r'",
-				},
-				{
-					number: 12,
-					name: "Small Lightning Bolt",
-					group: "Small Lightning Bolt",
-					algorithm: "M' R' U' R U' R' U2 R U' R r'",
-				},
-				{
-					number: 5,
-					name: "Square Shape",
-					group: "Square Shape",
-					algorithm: "l' U2 L U L' U l",
-				},
-				{
-					number: 6,
-					name: "Square Shape",
-					group: "Square Shape",
-					algorithm: "r U2 R' U' R U' r'",
-				},
-				{
-					number: 33,
-					name: "T Shape",
-					group: "T Shape",
-					algorithm: "R U R' U' R' F R F'",
-				},
-				{
-					number: 45,
-					name: "T Shape",
-					group: "T Shape",
-					algorithm: "F R U R' U' F'",
-				},
-				{
-					number: 36,
-					name: "W Shape",
-					group: "W Shape",
-					algorithm: "L' U' L U' L' U L U L F' L' F",
-				},
-				{
-					number: 38,
-					name: "W Shape",
-					group: "W Shape",
-					algorithm: "R U R' U R U' R' U' R' F R F'",
+					name: "No Edges Oriented",
+					cases: [
+						{ number: 1, algorithm: "R U2 (R2 F R F') U2 (R' F R F')" },
+						{ number: 2, algorithm: "r U r' U2 r U2 R' U2 R U' r'" },
+						{ number: 3, algorithm: "r' R2 U R' U r U2 r' U M'" },
+						{ number: 4, algorithm: "M U' r U2 r' U' R U' R' M'" },
+						{ number: 17, algorithm: "F R' F' R2 r' (U R U' R') U' M'" },
+						{ number: 18, algorithm: "r U R' U R U2 r2 U' R U' R' U2 r" },
+						{ number: 19, algorithm: "r' R (U R U R' U') M' (R' F R F')" },
+						{ number: 20, algorithm: "(r U R' U') M2 (U R U' R') U' M'" },
+					],
 				},
 			];
 
-			const createSolvedCube = () => ({
-				U: Array(9).fill("Y"),
-				D: Array(9).fill("W"),
-				F: Array(9).fill("G"),
-				B: Array(9).fill("B"),
-				R: Array(9).fill("R"),
-				L: Array(9).fill("O"),
-			});
-
-			const rotateFaceCW = (face) => {
-				const [a, b, c, d, e, f, g, h, i] = face;
-				face[0] = g;
-				face[1] = d;
-				face[2] = a;
-				face[3] = h;
-				face[4] = e;
-				face[5] = b;
-				face[6] = i;
-				face[7] = f;
-				face[8] = c;
+			const MOVE_CONFIGS = {
+				R: { axis: "x", layers: [1], dir: -1 },
+				L: { axis: "x", layers: [-1], dir: 1 },
+				U: { axis: "y", layers: [1], dir: 1 },
+				D: { axis: "y", layers: [-1], dir: -1 },
+				F: { axis: "z", layers: [1], dir: -1 },
+				B: { axis: "z", layers: [-1], dir: 1 },
+				M: { axis: "x", layers: [0], dir: 1 },
+				E: { axis: "y", layers: [0], dir: -1 },
+				S: { axis: "z", layers: [0], dir: -1 },
+				r: { axis: "x", layers: [1, 0], dir: -1 },
+				l: { axis: "x", layers: [-1, 0], dir: 1 },
+				u: { axis: "y", layers: [1, 0], dir: 1 },
+				d: { axis: "y", layers: [-1, 0], dir: -1 },
+				f: { axis: "z", layers: [1, 0], dir: -1 },
+				b: { axis: "z", layers: [-1, 0], dir: 1 },
+				x: { axis: "x", layers: [-1, 0, 1], dir: -1 },
+				y: { axis: "y", layers: [-1, 0, 1], dir: 1 },
+				z: { axis: "z", layers: [-1, 0, 1], dir: -1 },
 			};
 
-			const applyBaseMove = (cube, face) => {
-				switch (face) {
-					case "U": {
-						rotateFaceCW(cube.U);
-						const temp = cube.F.slice(0, 3);
-						cube.F.splice(0, 3, ...cube.R.slice(0, 3));
-						cube.R.splice(0, 3, ...cube.B.slice(0, 3));
-						cube.B.splice(0, 3, ...cube.L.slice(0, 3));
-						cube.L.splice(0, 3, ...temp);
-						break;
-					}
-					case "D": {
-						rotateFaceCW(cube.D);
-						const temp = cube.F.slice(6, 9);
-						cube.F.splice(6, 3, ...cube.L.slice(6, 9));
-						cube.L.splice(6, 3, ...cube.B.slice(6, 9));
-						cube.B.splice(6, 3, ...cube.R.slice(6, 9));
-						cube.R.splice(6, 3, ...temp);
-						break;
-					}
-					case "R": {
-						rotateFaceCW(cube.R);
-						const temp = [cube.U[2], cube.U[5], cube.U[8]];
-						[cube.U[2], cube.U[5], cube.U[8]] = [
-							cube.F[2],
-							cube.F[5],
-							cube.F[8],
-						];
-						[cube.F[2], cube.F[5], cube.F[8]] = [
-							cube.D[2],
-							cube.D[5],
-							cube.D[8],
-						];
-						[cube.D[2], cube.D[5], cube.D[8]] = [
-							cube.B[6],
-							cube.B[3],
-							cube.B[0],
-						];
-						[cube.B[6], cube.B[3], cube.B[0]] = temp;
-						break;
-					}
-					case "L": {
-						rotateFaceCW(cube.L);
-						const temp = [cube.U[0], cube.U[3], cube.U[6]];
-						[cube.U[0], cube.U[3], cube.U[6]] = [
-							cube.B[8],
-							cube.B[5],
-							cube.B[2],
-						];
-						[cube.B[8], cube.B[5], cube.B[2]] = [
-							cube.D[0],
-							cube.D[3],
-							cube.D[6],
-						];
-						[cube.D[0], cube.D[3], cube.D[6]] = [
-							cube.F[0],
-							cube.F[3],
-							cube.F[6],
-						];
-						[cube.F[0], cube.F[3], cube.F[6]] = temp;
-						break;
-					}
-					case "F": {
-						rotateFaceCW(cube.F);
-						const temp = [cube.U[6], cube.U[7], cube.U[8]];
-						[cube.U[6], cube.U[7], cube.U[8]] = [
-							cube.L[8],
-							cube.L[5],
-							cube.L[2],
-						];
-						[cube.L[8], cube.L[5], cube.L[2]] = [
-							cube.D[2],
-							cube.D[1],
-							cube.D[0],
-						];
-						[cube.D[2], cube.D[1], cube.D[0]] = [
-							cube.R[0],
-							cube.R[3],
-							cube.R[6],
-						];
-						[cube.R[0], cube.R[3], cube.R[6]] = temp;
-						break;
-					}
-					case "B": {
-						rotateFaceCW(cube.B);
-						const temp = [cube.U[0], cube.U[1], cube.U[2]];
-						[cube.U[0], cube.U[1], cube.U[2]] = [
-							cube.R[2],
-							cube.R[5],
-							cube.R[8],
-						];
-						[cube.R[2], cube.R[5], cube.R[8]] = [
-							cube.D[8],
-							cube.D[7],
-							cube.D[6],
-						];
-						[cube.D[8], cube.D[7], cube.D[6]] = [
-							cube.L[6],
-							cube.L[3],
-							cube.L[0],
-						];
-						[cube.L[6], cube.L[3], cube.L[0]] = temp;
-						break;
-					}
-					case "M": {
-						const temp = [cube.U[1], cube.U[4], cube.U[7]];
-						[cube.U[1], cube.U[4], cube.U[7]] = [
-							cube.B[7],
-							cube.B[4],
-							cube.B[1],
-						];
-						[cube.B[7], cube.B[4], cube.B[1]] = [
-							cube.D[1],
-							cube.D[4],
-							cube.D[7],
-						];
-						[cube.D[1], cube.D[4], cube.D[7]] = [
-							cube.F[1],
-							cube.F[4],
-							cube.F[7],
-						];
-						[cube.F[1], cube.F[4], cube.F[7]] = temp;
-						break;
-					}
+			const FACE_COLORS = {
+				U: "Y",
+				D: "W",
+				F: "G",
+				B: "B",
+				R: "R",
+				L: "O",
+			};
+
+			const FACE_NORMALS = {
+				U: [0, 1, 0],
+				D: [0, -1, 0],
+				F: [0, 0, 1],
+				B: [0, 0, -1],
+				R: [1, 0, 0],
+				L: [-1, 0, 0],
+			};
+
+			const normalToFace = (normal) => {
+				const key = normal.join(",");
+				const lookup = {
+					"0,1,0": "U",
+					"0,-1,0": "D",
+					"0,0,1": "F",
+					"0,0,-1": "B",
+					"1,0,0": "R",
+					"-1,0,0": "L",
+				};
+				return lookup[key];
+			};
+
+			const rotateVector = (vector, axis, dir) => {
+				const [x, y, z] = vector;
+				switch (axis) {
+					case "x":
+						return dir === 1 ? [x, -z, y] : [x, z, -y];
+					case "y":
+						return dir === 1 ? [z, y, -x] : [-z, y, x];
+					case "z":
+						return dir === 1 ? [-y, x, z] : [y, -x, z];
 					default:
-						break;
+						return vector;
 				}
 			};
 
-			const applyMove = (cube, move) => {
-				const times = move.isDouble ? 2 : 1;
-				const direction = move.isPrime ? -1 : 1;
-				for (let i = 0; i < times; i += 1) {
-					if (move.face === "r") {
-						if (direction === 1) {
-							applyBaseMove(cube, "R");
-							applyBaseMove(cube, "M");
-							applyBaseMove(cube, "M");
-							applyBaseMove(cube, "M");
-						} else {
-							applyBaseMove(cube, "R");
-							applyBaseMove(cube, "R");
-							applyBaseMove(cube, "R");
-							applyBaseMove(cube, "M");
+			const createSolvedCubies = () => {
+				const cubies = [];
+				for (let x = -1; x <= 1; x += 1) {
+					for (let y = -1; y <= 1; y += 1) {
+						for (let z = -1; z <= 1; z += 1) {
+							const stickers = {};
+							if (y === 1) stickers.U = FACE_COLORS.U;
+							if (y === -1) stickers.D = FACE_COLORS.D;
+							if (z === 1) stickers.F = FACE_COLORS.F;
+							if (z === -1) stickers.B = FACE_COLORS.B;
+							if (x === 1) stickers.R = FACE_COLORS.R;
+							if (x === -1) stickers.L = FACE_COLORS.L;
+							cubies.push({ x, y, z, stickers });
 						}
-						continue;
-					}
-					if (move.face === "l") {
-						if (direction === 1) {
-							applyBaseMove(cube, "L");
-							applyBaseMove(cube, "M");
-						} else {
-							applyBaseMove(cube, "L");
-							applyBaseMove(cube, "L");
-							applyBaseMove(cube, "L");
-							applyBaseMove(cube, "M");
-							applyBaseMove(cube, "M");
-							applyBaseMove(cube, "M");
-						}
-						continue;
-					}
-					const face = move.face.toUpperCase();
-					if (direction === 1) {
-						applyBaseMove(cube, face);
-					} else {
-						applyBaseMove(cube, face);
-						applyBaseMove(cube, face);
-						applyBaseMove(cube, face);
 					}
 				}
+				return cubies;
 			};
+
+			const rotateCubie = (cubie, axis, dir) => {
+				[cubie.x, cubie.y, cubie.z] = rotateVector([cubie.x, cubie.y, cubie.z], axis, dir);
+				const rotatedStickers = {};
+				Object.entries(cubie.stickers).forEach(([face, color]) => {
+					const normal = FACE_NORMALS[face];
+					const rotatedNormal = rotateVector(normal, axis, dir);
+					const rotatedFace = normalToFace(rotatedNormal);
+					if (rotatedFace) {
+						rotatedStickers[rotatedFace] = color;
+					}
+				});
+				cubie.stickers = rotatedStickers;
+			};
+
+			const rotateLayers = (cubies, axis, layers, dir, turns) => {
+				for (let turn = 0; turn < turns; turn += 1) {
+					cubies.forEach((cubie) => {
+						if (layers.includes(cubie[axis])) {
+							rotateCubie(cubie, axis, dir);
+						}
+					});
+				}
+			};
+
+			const normalizeAlgorithm = (algorithm) =>
+				algorithm
+					.replace(/[()\[\]]/g, " ")
+					.replace(/,/g, " ")
+					.replace(/\s+/g, " ")
+					.trim();
 
 			const parseAlgorithm = (algorithm) => {
-				return algorithm
-					.split(/\s+/)
-					.map((token) => token.trim())
-					.filter(Boolean)
-					.map((token) => {
-						const match = token.match(/^([RULDFBrlM])([2]?)(['`]?)$/);
-						if (!match) {
-							throw new Error(`Invalid move: ${token}`);
-						}
-						return {
-							face: match[1],
-							isDouble: match[2] === "2",
-							isPrime: match[3] === "'" || match[3] === "`",
-							raw: token,
-						};
-					});
+				const normalized = normalizeAlgorithm(algorithm);
+				if (!normalized) return [];
+				return normalized.split(" ").map((token) => {
+					const match = token.match(/^([RULDFBrludfbMESxyz])([2]?)(['`]?)$/);
+					if (!match) {
+						throw new Error(`Invalid move: ${token}`);
+					}
+					return {
+						face: match[1],
+						isDouble: match[2] === "2",
+						isPrime: match[3] === "'" || match[3] === "`",
+						raw: token,
+					};
+				});
 			};
 
-			const invertMoves = (moves) => {
-				return [...moves].reverse().map((move) => ({
+			const applyMove = (cubies, move) => {
+				const config = MOVE_CONFIGS[move.face];
+				if (!config) {
+					throw new Error(`Invalid move: ${move.raw}`);
+				}
+				const turns = move.isDouble ? 2 : 1;
+				const dir = config.dir * (move.isPrime ? -1 : 1);
+				rotateLayers(cubies, config.axis, config.layers, dir, turns);
+			};
+
+			const invertMoves = (moves) =>
+				[...moves].reverse().map((move) => ({
 					...move,
 					isPrime: move.isDouble ? move.isPrime : !move.isPrime,
 				}));
+
+			const findCubie = (cubies, x, y, z) =>
+				cubies.find((cubie) => cubie.x === x && cubie.y === y && cubie.z === z);
+
+			const U_INDEX_MAP = {
+				"-1,-1": 0,
+				"0,-1": 1,
+				"1,-1": 2,
+				"-1,0": 3,
+				"0,0": 4,
+				"1,0": 5,
+				"-1,1": 6,
+				"0,1": 7,
+				"1,1": 8,
+			};
+
+			const getUFace = (cubies) => {
+				const face = Array(9).fill("");
+				cubies.forEach((cubie) => {
+					if (cubie.y === 1 && cubie.stickers.U) {
+						const index = U_INDEX_MAP[`${cubie.x},${cubie.z}`];
+						face[index] = cubie.stickers.U;
+					}
+				});
+				return face;
+			};
+
+			const getEdgeMarkers = (cubies) => {
+				const edgeDefinitions = {
+					top: { position: [0, 1, -1], face: "B" },
+					left: { position: [-1, 1, 0], face: "L" },
+					right: { position: [1, 1, 0], face: "R" },
+					bottom: { position: [0, 1, 1], face: "F" },
+				};
+				return Object.entries(edgeDefinitions).reduce((markers, [side, definition]) => {
+					const [x, y, z] = definition.position;
+					const cubie = findCubie(cubies, x, y, z);
+					if (!cubie) return markers;
+					const uColor = cubie.stickers.U;
+					const sideColor = cubie.stickers[definition.face];
+					markers[side] = sideColor === FACE_COLORS.U && uColor !== FACE_COLORS.U;
+					return markers;
+				}, {});
 			};
 
 			const buildCasePattern = (algorithm) => {
-				const cube = createSolvedCube();
+				const cubies = createSolvedCubies();
 				const moves = parseAlgorithm(algorithm);
 				const inverseMoves = invertMoves(moves);
-				inverseMoves.forEach((move) => applyMove(cube, move));
-				return cube;
+				inverseMoves.forEach((move) => applyMove(cubies, move));
+				return {
+					U: getUFace(cubies),
+					markers: getEdgeMarkers(cubies),
+				};
 			};
 
 			const createMarker = (side, offset) => {
@@ -837,65 +603,87 @@
 				return marker;
 			};
 
-			const createMiniCube = (cube) => {
+			const createMiniCube = (pattern) => {
 				const cubeElement = document.createElement("div");
 				cubeElement.className = "oll-cube";
-				const edgeMarkers = [];
-				const edgeMap = {
-					1: { side: "top", offset: 1, face: "B", index: 1 },
-					3: { side: "left", offset: 1, face: "L", index: 1 },
-					5: { side: "right", offset: 1, face: "R", index: 1 },
-					7: { side: "bottom", offset: 1, face: "F", index: 1 },
-				};
-
-				cube.U.forEach((color, index) => {
+				pattern.U.forEach((color) => {
 					const cell = document.createElement("div");
 					cell.className = "oll-cell";
-					if (color === "Y") {
+					if (color === FACE_COLORS.U) {
 						cell.classList.add("oll-cell--yellow");
-					} else if (
-						edgeMap[index] &&
-						cube[edgeMap[index].face][edgeMap[index].index] === "Y"
-					) {
-						edgeMarkers.push(edgeMap[index]);
 					}
 					cubeElement.appendChild(cell);
 				});
 
-				edgeMarkers.forEach((marker) => {
-					cubeElement.appendChild(createMarker(marker.side, marker.offset));
+				const markerOffsets = {
+					top: 1,
+					left: 1,
+					right: 1,
+					bottom: 1,
+				};
+				Object.entries(markerOffsets).forEach(([side, offset]) => {
+					if (pattern.markers[side]) {
+						cubeElement.appendChild(createMarker(side, offset));
+					}
 				});
 
 				return cubeElement;
 			};
 
+			const createCaseRow = (ollCase, groupName) => {
+				const link = document.createElement("a");
+				link.href = `algs/alg.html?alg=${encodeURIComponent(ollCase.algorithm)}`;
+				link.className = "oll-row";
+				link.setAttribute("aria-label", `OLL ${ollCase.number} ${groupName}`);
+
+				let pattern;
+				try {
+					pattern = buildCasePattern(ollCase.algorithm);
+				} catch (error) {
+					pattern = { U: Array(9).fill(FACE_COLORS.U), markers: {} };
+				}
+
+				const number = document.createElement("div");
+				number.className = "oll-row__number";
+				number.textContent = ollCase.number;
+
+				const cube = createMiniCube(pattern);
+				const info = document.createElement("div");
+				info.className = "oll-row__info";
+				info.innerHTML = `
+					<div class="oll-row__title">OLL ${ollCase.number}</div>
+					<div class="oll-row__algorithm">${ollCase.algorithm}</div>
+					<div class="oll-row__meta">
+						<span class="oll-row__notation">Notation: OLL ${ollCase.number}</span>
+						<span class="oll-probability">probability = 1/54</span>
+					</div>
+				`;
+
+				link.appendChild(number);
+				link.appendChild(cube);
+				link.appendChild(info);
+				return link;
+			};
+
 			const ollTable = document.getElementById("ollTable");
 			if (ollTable) {
-				ollAlgorithms.forEach((ollCase) => {
-					const link = document.createElement("a");
-					link.href = `algs/alg.html?alg=${encodeURIComponent(ollCase.algorithm)}`;
-					link.className = "ollCard";
+				ollGroups.forEach((group) => {
+					const section = document.createElement("section");
+					section.className = "oll-group";
 
-					let cubeState;
-					try {
-						cubeState = buildCasePattern(ollCase.algorithm);
-					} catch (error) {
-						cubeState = createSolvedCube();
-					}
-					const cube = createMiniCube(cubeState);
-					const info = document.createElement("div");
-					info.className = "oll-details";
-					info.innerHTML = `
-						<h3>OLL ${ollCase.number} - ${ollCase.name}</h3>
-						<p><strong>Group:</strong> ${ollCase.group}</p>
-						<p><strong>Notation:</strong> OLL ${ollCase.number}</p>
-						<p><strong>Algorithm:</strong> ${ollCase.algorithm}</p>
-						<p>OLL ${ollCase.number} - <span class="oll-probability">probability = 1/54</span></p>
-					`;
+					const title = document.createElement("h3");
+					title.className = "oll-group__title";
+					title.textContent = group.name;
+					section.appendChild(title);
 
-					link.appendChild(cube);
-					link.appendChild(info);
-					ollTable.appendChild(link);
+					const cases = document.createElement("div");
+					cases.className = "oll-group__cases";
+					group.cases.forEach((ollCase) => {
+						cases.appendChild(createCaseRow(ollCase, group.name));
+					});
+
+					section.appendChild(cases);
+					ollTable.appendChild(section);
 				});
 			}
 		</script>

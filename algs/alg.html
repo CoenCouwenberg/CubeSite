@@ -260,48 +260,58 @@
 				pivot.rotation = BABYLON.Vector3.Zero();
 			};
 
-			const parseAlgorithm = (algorithm) => {
-				const tokens = algorithm
-					.split(/\s+/)
-					.map((token) => token.trim())
-					.filter(Boolean);
-
-				return tokens.map((token) => {
-					const match = token.match(/^([RULDFBrlM])([2]?)(['`]?)$/);
-					if (!match) {
-						throw new Error(`Invalid move: ${token}`);
-					}
-					const face = match[1];
-					const isDouble = match[2] === "2";
-					const isPrime = match[3] === "'" || match[3] === "`";
-					return { face, isDouble, isPrime, raw: token };
-				});
-			};
-
-			const moveToRotation = (move) => {
-				const faceMap = {
-					R: { axis: "x", layers: [1], invert: false },
-					L: { axis: "x", layers: [-1], invert: true },
-					U: { axis: "y", layers: [1], invert: false },
-					D: { axis: "y", layers: [-1], invert: true },
-					F: { axis: "z", layers: [1], invert: false },
-					B: { axis: "z", layers: [-1], invert: true },
-					M: { axis: "x", layers: [0], invert: true },
-					r: { axis: "x", layers: [1, 0], invert: false },
-					l: { axis: "x", layers: [-1, 0], invert: true },
+				const MOVE_CONFIGS = {
+					R: { axis: "x", layers: [1], dir: -1 },
+					L: { axis: "x", layers: [-1], dir: 1 },
+					U: { axis: "y", layers: [1], dir: 1 },
+					D: { axis: "y", layers: [-1], dir: -1 },
+					F: { axis: "z", layers: [1], dir: -1 },
+					B: { axis: "z", layers: [-1], dir: 1 },
+					M: { axis: "x", layers: [0], dir: 1 },
+					E: { axis: "y", layers: [0], dir: -1 },
+					S: { axis: "z", layers: [0], dir: -1 },
+					r: { axis: "x", layers: [1, 0], dir: -1 },
+					l: { axis: "x", layers: [-1, 0], dir: 1 },
+					u: { axis: "y", layers: [1, 0], dir: 1 },
+					d: { axis: "y", layers: [-1, 0], dir: -1 },
+					f: { axis: "z", layers: [1, 0], dir: -1 },
+					b: { axis: "z", layers: [-1, 0], dir: 1 },
+					x: { axis: "x", layers: [-1, 0, 1], dir: -1 },
+					y: { axis: "y", layers: [-1, 0, 1], dir: 1 },
+					z: { axis: "z", layers: [-1, 0, 1], dir: -1 },
 				};
 
-				const config = faceMap[move.face];
-				if (!config) {
-					throw new Error(`Invalid move: ${move.raw}`);
-				}
-				let direction = move.isPrime ? -1 : 1;
-				if (config.invert) direction *= -1;
-				const angle = move.isDouble
-					? Math.PI * direction
-					: (Math.PI / 2) * direction;
-				return { axis: config.axis, layers: config.layers, angle };
-			};
+				const normalizeAlgorithm = (algorithm) =>
+					algorithm
+						.replace(/[()\[\]]/g, " ")
+						.replace(/,/g, " ")
+						.replace(/\s+/g, " ")
+						.trim();
+
+				const parseAlgorithm = (algorithm) => {
+					const normalized = normalizeAlgorithm(algorithm);
+					if (!normalized) return [];
+					return normalized.split(" ").map((token) => {
+						const match = token.match(/^([RULDFBrludfbMESxyz])([2]?)(['`]?)$/);
+						if (!match) {
+							throw new Error(`Invalid move: ${token}`);
+						}
+						const face = match[1];
+						const isDouble = match[2] === "2";
+						const isPrime = match[3] === "'" || match[3] === "`";
+						return { face, isDouble, isPrime, raw: token };
+					});
+				};
+
+				const moveToRotation = (move) => {
+					const config = MOVE_CONFIGS[move.face];
+					if (!config) {
+						throw new Error(`Invalid move: ${move.raw}`);
+					}
+					const direction = config.dir * (move.isPrime ? -1 : 1);
+					const angle = move.isDouble ? Math.PI * direction : (Math.PI / 2) * direction;
+					return { axis: config.axis, layers: config.layers, angle };
+				};
 
 			const rotateLayer = (axis, layers, angle) => {
 				return new Promise((resolve) => {
