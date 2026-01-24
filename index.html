@@ -380,6 +380,15 @@
 					.join(" ")
 					.trim();
 
+			const stripPreviewRotations = (algorithm) => {
+				const normalized = normalizeAlgorithm(algorithm);
+				if (!normalized) return normalized;
+				return normalized
+					.split(" ")
+					.filter((token) => !/^[xz]/.test(token))
+					.join(" ");
+			};
+
 			const parseAlgorithm = (algorithm) => {
 				const normalized = normalizeAlgorithm(algorithm);
 				if (!normalized) return [];
@@ -521,7 +530,7 @@
 
 			const buildCasePattern = (ollCase) => {
 				const cubies = createSolvedCubies();
-				const algorithm = composeAlgorithm(ollCase);
+				const algorithm = stripPreviewRotations(composeAlgorithm(ollCase));
 				const moves = parseAlgorithm(algorithm);
 				const inverseMoves = invertMoves(moves);
 				inverseMoves.forEach((move) => applyMove(cubies, move));

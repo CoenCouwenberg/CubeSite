@@ -124,6 +124,15 @@ const composeAlgorithm = (ollCase) =>
 		.join(" ")
 		.trim();
 
+const stripPreviewRotations = (algorithm) => {
+	const normalized = normalizeAlgorithm(algorithm);
+	if (!normalized) return normalized;
+	return normalized
+		.split(" ")
+		.filter((token) => !/^[xz]/.test(token))
+		.join(" ");
+};
+
 const parseAlgorithm = (algorithm) => {
 	const normalized = normalizeAlgorithm(algorithm);
 	if (!normalized) return [];
@@ -157,70 +166,6 @@ const invertMoves = (moves) =>
 		isPrime: move.isDouble ? move.isPrime : !move.isPrime,
 	}));
 
-const findCubie = (cubies, x, y, z) =>
-	cubies.find((cubie) => cubie.x === x && cubie.y === y && cubie.z === z);
-
-const cloneCubies = (cubies) =>
-	cubies.map((cubie) => ({
-		x: cubie.x,
-		y: cubie.y,
-		z: cubie.z,
-		stickers: { ...cubie.stickers },
-	}));
-
-const CENTER_COORDS = {
-	U: [0, 1, 0],
-	D: [0, -1, 0],
-	F: [0, 0, 1],
-	B: [0, 0, -1],
-	R: [1, 0, 0],
-	L: [-1, 0, 0],
-};
-
-const centersMatch = (cubies) =>
-	Object.entries(CENTER_COORDS).every(([face, [x, y, z]]) => {
-		const center = findCubie(cubies, x, y, z);
-		return center && center.stickers[face] === FACE_COLORS[face];
-	});
-
-const applyCubeTurn = (cubies, face, turns) => {
-	if (!turns) return;
-	const normalizedTurns = turns % 4;
-	if (!normalizedTurns) return;
-	let raw = face;
-	let isDouble = false;
-	let isPrime = false;
-	if (normalizedTurns === 2) {
-		isDouble = true;
-		raw = `${face}2`;
-	} else if (normalizedTurns === 3) {
-		isPrime = true;
-		raw = `${face}'`;
-	}
-	applyMove(cubies, { face, isDouble, isPrime, raw });
-};
-
-const normalizeOrientation = (cubies) => {
-	if (centersMatch(cubies)) return true;
-	for (let xTurns = 0; xTurns < 4; xTurns += 1) {
-		for (let yTurns = 0; yTurns < 4; yTurns += 1) {
-			for (let zTurns = 0; zTurns < 4; zTurns += 1) {
-				const test = cloneCubies(cubies);
-				applyCubeTurn(test, "x", xTurns);
-				applyCubeTurn(test, "y", yTurns);
-				applyCubeTurn(test, "z", zTurns);
-				if (centersMatch(test)) {
-					applyCubeTurn(cubies, "x", xTurns);
-					applyCubeTurn(cubies, "y", yTurns);
-					applyCubeTurn(cubies, "z", zTurns);
-					return true;
-				}
-			}
-		}
-	}
-	return false;
-};
-
 const validateFaceCounts = (cubies) => {
 	const counts = { U: 0, D: 0, F: 0, B: 0, R: 0, L: 0 };
 	cubies.forEach((cubie) => {
@@ -250,11 +195,10 @@ const validateCubies = (cubies) =>
 
 const validateCase = (ollCase) => {
 	const cubies = createSolvedCubies();
-	const algorithm = composeAlgorithm(ollCase);
+	const algorithm = stripPreviewRotations(composeAlgorithm(ollCase));
 	const moves = parseAlgorithm(algorithm);
 	const inverseMoves = invertMoves(moves);
 	inverseMoves.forEach((move) => applyMove(cubies, move));
-	normalizeOrientation(cubies);
 
 	const topStickers = cubies.filter((cubie) => cubie.y === 1 && cubie.stickers.U).length;
 	return {
@@ -262,6 +206,7 @@ const validateCase = (ollCase) => {
 		validFaces: validateFaceCounts(cubies),
 		validColors: validateColorCounts(cubies),
 		validCubies: validateCubies(cubies),
+		usesCubeRotation: /(^|\s)[xz]/.test(normalizeAlgorithm(composeAlgorithm(ollCase))),
 	};
 };
 
@@ -290,21 +235,24 @@ groups.forEach((group) => {
 			);
 		}
 
-			const result = validateCase(ollCase);
-			if (result.topStickers !== 9) {
-				errors.push(`OLL ${ollCase.number} does not keep 9 stickers on the U face.`);
-			}
-			if (!result.validFaces) {
-				errors.push(`OLL ${ollCase.number} breaks face sticker counts.`);
-			}
-			if (!result.validColors) {
-				errors.push(`OLL ${ollCase.number} breaks color counts.`);
-			}
-			if (!result.validCubies) {
-				errors.push(`OLL ${ollCase.number} produces duplicate stickers on a cubie.`);
-			}
-		});
+		const result = validateCase(ollCase);
+		if (result.topStickers !== 9) {
+			errors.push(`OLL ${ollCase.number} does not keep 9 stickers on the U face.`);
+		}
+		if (!result.validFaces) {
+			errors.push(`OLL ${ollCase.number} breaks face sticker counts.`);
+		}
+		if (!result.validColors) {
+			errors.push(`OLL ${ollCase.number} breaks color counts.`);
+		}
+		if (!result.validCubies) {
+			errors.push(`OLL ${ollCase.number} produces duplicate stickers on a cubie.`);
+		}
+		if (result.usesCubeRotation) {
+			warnings.push(`OLL ${ollCase.number} uses x/z rotations that are stripped for previews.`);
+		}
 	});
+});
 
 if (warnings.length > 0) {
 	console.warn("Warnings:");
