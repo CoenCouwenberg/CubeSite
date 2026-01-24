@@ -1,0 +1,134 @@
+{
+  "version": 2,
+  "generatedAt": "2026-01-24",
+  "description": "OLL cases and preferred algorithms aligned with the provided reference sheets.",
+  "groups": [
+    {
+      "name": "All Edges Oriented Correctly",
+      "cases": [
+        { "number": 26, "category": "All Edges Oriented Correctly", "algorithm": "R U2 R' U' R U' R'", "rotations": "", "auf": "", "probability": "1/54", "code": "OCL6-26" },
+        { "number": 27, "category": "All Edges Oriented Correctly", "algorithm": "R U R' U R U2 R'", "rotations": "", "auf": "", "probability": "1/54", "code": "OCL7-27" },
+        { "number": 21, "category": "All Edges Oriented Correctly", "algorithm": "(R U2 R') (U' R U R') (U' R U' R')", "rotations": "", "auf": "", "probability": "1/108", "code": "OCL1-21" },
+        { "number": 22, "category": "All Edges Oriented Correctly", "algorithm": "R U2 R2 U' R2 U' R2 U2 R", "rotations": "", "auf": "", "probability": "1/54", "code": "OCL2-22" },
+        { "number": 24, "category": "All Edges Oriented Correctly", "algorithm": "(r U R' U') (r' F R F')", "rotations": "", "auf": "", "probability": "1/54", "code": "OCL4-24" },
+        { "number": 25, "category": "All Edges Oriented Correctly", "algorithm": "F' (r U R' U') r' F R", "rotations": "y", "auf": "", "probability": "1/54", "code": "OCL5-25" },
+        { "number": 23, "category": "All Edges Oriented Correctly", "algorithm": "R2 D (R' U2 R) D' (R' U2 R')", "rotations": "", "auf": "", "probability": "1/54", "code": "OCL3-23" }
+      ]
+    },
+    {
+      "name": "T-Shapes",
+      "cases": [
+        { "number": 33, "category": "T-Shapes", "algorithm": "(R U R' U') (R' F R F')", "rotations": "", "auf": "", "probability": "1/54", "code": "T1-33" },
+        { "number": 45, "category": "T-Shapes", "algorithm": "F (R U R' U') F'", "rotations": "", "auf": "", "probability": "1/54", "code": "T2-45" }
+      ]
+    },
+    {
+      "name": "Squares",
+      "cases": [
+        { "number": 5, "category": "Squares", "algorithm": "(r' U2 R U R' U r)", "rotations": "", "auf": "", "probability": "1/54", "code": "S1-5" },
+        { "number": 6, "category": "Squares", "algorithm": "(r U2 R' U' R U' r')", "rotations": "", "auf": "", "probability": "1/54", "code": "S2-6" }
+      ]
+    },
+    {
+      "name": "C-Shapes",
+      "cases": [
+        { "number": 34, "category": "C-Shapes", "algorithm": "(R U R2 U') (R' F R U R U' F')", "rotations": "", "auf": "", "probability": "1/54", "code": "C1-34" },
+        { "number": 46, "category": "C-Shapes", "algorithm": "R' U' (R' F R F') U R", "rotations": "", "auf": "", "probability": "1/54", "code": "C2-46" }
+      ]
+    },
+    {
+      "name": "W-Shapes",
+      "cases": [
+        { "number": 36, "category": "W-Shapes", "algorithm": "(R' U' R U') (R' U R U) l U' R' U x", "rotations": "", "auf": "", "probability": "1/54", "code": "W1-36" },
+        { "number": 38, "category": "W-Shapes", "algorithm": "(R U R' U) (R' U' R U') (R' F R F')", "rotations": "", "auf": "", "probability": "1/54", "code": "W2-38" }
+      ]
+    },
+    {
+      "name": "Corners Correct, Edges Flipped",
+      "cases": [
+        { "number": 28, "category": "Corners Correct, Edges Flipped", "algorithm": "(r U R' U') M (U R U' R')", "rotations": "", "auf": "", "probability": "1/54", "code": "E1-28" },
+        { "number": 57, "category": "Corners Correct, Edges Flipped", "algorithm": "(R U R' U') M' (U R U' r')", "rotations": "", "auf": "", "probability": "1/108", "code": "E2-57" }
+      ]
+    },
+    {
+      "name": "P-Shapes",
+      "cases": [
+        { "number": 31, "category": "P-Shapes", "algorithm": "(R' U' F) (U R U' R') F' R", "rotations": "", "auf": "", "probability": "1/54", "code": "P1-31" },
+        { "number": 32, "category": "P-Shapes", "algorithm": "R U B' (U' R' U) (R B R')", "rotations": "", "auf": "", "probability": "1/54", "code": "P2-32" },
+        { "number": 43, "category": "P-Shapes", "algorithm": "R' U' F' U F R", "rotations": "y", "auf": "", "probability": "1/54", "code": "P3-43" },
+        { "number": 44, "category": "P-Shapes", "algorithm": "f (R U R' U') f'", "rotations": "", "auf": "", "probability": "1/54", "code": "P4-44" }
+      ]
+    },
+    {
+      "name": "I-Shapes",
+      "cases": [
+        { "number": 51, "category": "I-Shapes", "algorithm": "f (R U R' U') (R U R' U') f'", "rotations": "", "auf": "", "probability": "1/54", "code": "I1-51" },
+        { "number": 56, "category": "I-Shapes", "algorithm": "r' U' r (U' r U r') (U' r U r') r' U r", "rotations": "", "auf": "", "probability": "1/108", "code": "I4-56" },
+        { "number": 52, "category": "I-Shapes", "algorithm": "(R' U' R U' R' U) y' (R' U R) B", "rotations": "", "auf": "", "probability": "1/54", "code": "I2-52" },
+        { "number": 55, "category": "I-Shapes", "algorithm": "(R' F R U) (R' U' R2 F') R2 U' R' (U R U' R')", "rotations": "y", "auf": "", "probability": "1/108", "code": "I3-55" }
+      ]
+    },
+    {
+      "name": "Fish Shapes",
+      "cases": [
+        { "number": 9, "category": "Fish Shapes", "algorithm": "(R U R' U') R' F (R2 U R' U') F'", "rotations": "", "auf": "", "probability": "1/54", "code": "F1-9" },
+        { "number": 10, "category": "Fish Shapes", "algorithm": "(R U R' U) (R' F R F') (R U2 R')", "rotations": "", "auf": "", "probability": "1/54", "code": "F2-10" },
+        { "number": 35, "category": "Fish Shapes", "algorithm": "(R U2) (R2 F R F') (R U2 R')", "rotations": "", "auf": "", "probability": "1/54", "code": "F3-35" },
+        { "number": 37, "category": "Fish Shapes", "algorithm": "F (R U' R' U') (R U R' F')", "rotations": "", "auf": "", "probability": "1/54", "code": "F4-37" }
+      ]
+    },
+    {
+      "name": "Knight Move Shapes",
+      "cases": [
+        { "number": 13, "category": "Knight Move Shapes", "algorithm": "(r U' r') (U' r U r') y' (R' U R)", "rotations": "", "auf": "", "probability": "1/54", "code": "K1-13" },
+        { "number": 14, "category": "Knight Move Shapes", "algorithm": "(R' F R) (U R' F' R) (F U' F')", "rotations": "", "auf": "", "probability": "1/54", "code": "K2-14" },
+        { "number": 16, "category": "Knight Move Shapes", "algorithm": "(r U r') (R U R' U') (r U' r')", "rotations": "", "auf": "", "probability": "1/54", "code": "K4-16" },
+        { "number": 15, "category": "Knight Move Shapes", "algorithm": "(r' U' r) (R' U' R U) (r' U r)", "rotations": "", "auf": "", "probability": "1/54", "code": "K3-15" }
+      ]
+    },
+    {
+      "name": "Awkward Shapes",
+      "cases": [
+        { "number": 29, "category": "Awkward Shapes", "algorithm": "(R U R' U') (R U' R') (F' U' F) (R U R')", "rotations": "y", "auf": "", "probability": "1/54", "code": "A1-29" },
+        { "number": 30, "category": "Awkward Shapes", "algorithm": "F U (R U2 R' U') (R U2 R' U') F'", "rotations": "y'", "auf": "", "probability": "1/54", "code": "A2-30" },
+        { "number": 41, "category": "Awkward Shapes", "algorithm": "(R U R' U R U2 R') F (R U R' U') F'", "rotations": "", "auf": "", "probability": "1/54", "code": "A3-41" },
+        { "number": 42, "category": "Awkward Shapes", "algorithm": "(R' U' R U' R' U2 R) F (R U R' U') F'", "rotations": "", "auf": "", "probability": "1/54", "code": "A4-42" }
+      ]
+    },
+    {
+      "name": "L-Shapes",
+      "cases": [
+        { "number": 48, "category": "L-Shapes", "algorithm": "F (R U R' U') (R U R' U') F'", "rotations": "", "auf": "", "probability": "1/54", "code": "L2-48" },
+        { "number": 47, "category": "L-Shapes", "algorithm": "F' (L' U' L U) (L' U' L U) F", "rotations": "", "auf": "", "probability": "1/54", "code": "L1-47" },
+        { "number": 49, "category": "L-Shapes", "algorithm": "r U' r2 U r2 U r2 U' r", "rotations": "", "auf": "", "probability": "1/54", "code": "L3-49" },
+        { "number": 50, "category": "L-Shapes", "algorithm": "r' U r2 U' r2 U' r2 U r'", "rotations": "", "auf": "", "probability": "1/54", "code": "L4-50" },
+        { "number": 53, "category": "L-Shapes", "algorithm": "(r' U' R U') (R' U R U') (R' U2 r)", "rotations": "", "auf": "", "probability": "1/54", "code": "L5-53" },
+        { "number": 54, "category": "L-Shapes", "algorithm": "(r U R' U) (R U' R' U) (R U2 r')", "rotations": "", "auf": "", "probability": "1/54", "code": "L6-54" }
+      ]
+    },
+    {
+      "name": "Lightning Bolts",
+      "cases": [
+        { "number": 7, "category": "Lightning Bolts", "algorithm": "(r U R' U R U2 r')", "rotations": "", "auf": "", "probability": "1/54", "code": "B1-7" },
+        { "number": 8, "category": "Lightning Bolts", "algorithm": "(r' U' R U' R' U2 r)", "rotations": "", "auf": "", "probability": "1/54", "code": "B2-8" },
+        { "number": 11, "category": "Lightning Bolts", "algorithm": "r' (R2 U R' U R U2 R') U M'", "rotations": "", "auf": "", "probability": "1/54", "code": "B3-11" },
+        { "number": 12, "category": "Lightning Bolts", "algorithm": "M' (R' U' R U' R' U2 R) U' M", "rotations": "", "auf": "", "probability": "1/54", "code": "B4-12" },
+        { "number": 39, "category": "Lightning Bolts", "algorithm": "(L F') (L' U' L U F U' L')", "rotations": "", "auf": "", "probability": "1/54", "code": "B5-39" },
+        { "number": 40, "category": "Lightning Bolts", "algorithm": "(R' F) (R U R' U') F' U R", "rotations": "", "auf": "", "probability": "1/54", "code": "B6-40" }
+      ]
+    },
+    {
+      "name": "No Edges Flipped Correctly",
+      "cases": [
+        { "number": 1, "category": "No Edges Flipped Correctly", "algorithm": "(R U2) (R2 F R F') U2 (R' F R F')", "rotations": "", "auf": "", "probability": "1/108", "code": "O1-1" },
+        { "number": 2, "category": "No Edges Flipped Correctly", "algorithm": "F (R U R' U') F' f (R U R' U') f'", "rotations": "", "auf": "", "probability": "1/54", "code": "O2-2" },
+        { "number": 3, "category": "No Edges Flipped Correctly", "algorithm": "f (R U R' U') f' U' F (R U R' U') F'", "rotations": "", "auf": "", "probability": "1/54", "code": "O3-3" },
+        { "number": 4, "category": "No Edges Flipped Correctly", "algorithm": "f (R U R' U') f' U F (R U R' U') F'", "rotations": "", "auf": "", "probability": "1/54", "code": "O4-4" },
+        { "number": 18, "category": "No Edges Flipped Correctly", "algorithm": "R U2 (R2 F R F') U2 M' (U R U' r')", "rotations": "y", "auf": "", "probability": "1/54", "code": "O6-18" },
+        { "number": 19, "category": "No Edges Flipped Correctly", "algorithm": "M U (R U R' U') M' (R' F R F')", "rotations": "", "auf": "", "probability": "1/54", "code": "O7-19" },
+        { "number": 17, "category": "No Edges Flipped Correctly", "algorithm": "(R U R' U) (R' F R F') U2 (R' F R F')", "rotations": "", "auf": "", "probability": "1/54", "code": "O5-17" },
+        { "number": 20, "category": "No Edges Flipped Correctly", "algorithm": "M U (R U R' U') M2 (U R U' r')", "rotations": "", "auf": "", "probability": "1/216", "code": "O8-20" }
+      ]
+    }
+  ]
+}
