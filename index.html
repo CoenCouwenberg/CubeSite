@@ -140,6 +140,13 @@
 					</div>
 				</div>
 			</div>
+			<div class="ollOverview" id="ollOverview">
+				<div class="section2title ollTitle">
+					<h2>OLL algorithm overview</h2>
+					<p>Choose any OLL case below to practice the full algorithm.</p>
+				</div>
+				<div class="ollTable" id="ollTable"></div>
+			</div>
 
 			<div class="help">
 				<a href="help.html">
@@ -247,6 +254,185 @@
 			window.addEventListener("resize", function () {
 				engine.resize();
 			});
+		</script>
+		<script>
+			const ollAlgorithms = [
+				{
+					caseName: "OLL 21",
+					notation: "H",
+					algorithm: "(R U R' U) (R U' R' U) (R U2 R')",
+					probability: "1/54",
+					pattern: {
+						face: [
+							false,
+							true,
+							false,
+							true,
+							true,
+							true,
+							false,
+							true,
+							false,
+						],
+					},
+				},
+				{
+					caseName: "OLL 22",
+					notation: "Pi",
+					algorithm: "R U2 R2 F R F' U2 R' F R F'",
+					probability: "1/54",
+					pattern: {
+						face: [
+							true,
+							false,
+							true,
+							false,
+							true,
+							false,
+							true,
+							false,
+							true,
+						],
+					},
+				},
+				{
+					caseName: "OLL 23",
+					notation: "T",
+					algorithm: "R U R' U' R' F R F'",
+					probability: "1/54",
+					pattern: {
+						face: [
+							true,
+							true,
+							true,
+							false,
+							true,
+							false,
+							false,
+							true,
+							false,
+						],
+					},
+				},
+				{
+					caseName: "OLL 24",
+					notation: "U",
+					algorithm: "R2 D R' U2 R D' R' U2 R'",
+					probability: "1/54",
+					pattern: {
+						face: [
+							true,
+							false,
+							true,
+							true,
+							true,
+							true,
+							false,
+							true,
+							false,
+						],
+					},
+				},
+				{
+					caseName: "OLL 25",
+					notation: "Sune",
+					algorithm: "R U R' U R U2 R'",
+					probability: "1/54",
+					pattern: {
+						face: [
+							true,
+							true,
+							false,
+							false,
+							true,
+							true,
+							false,
+							false,
+							true,
+						],
+					},
+				},
+				{
+					caseName: "OLL 26",
+					notation: "Anti-Sune",
+					algorithm: "R U2 R' U' R U' R'",
+					probability: "1/54",
+					pattern: {
+						face: [
+							false,
+							true,
+							true,
+							true,
+							true,
+							false,
+							true,
+							false,
+							false,
+						],
+					},
+				},
+			];
+
+			const createMarker = (side, offset) => {
+				const marker = document.createElement("span");
+				marker.className = "oll-marker";
+				marker.dataset.side = side;
+				marker.style.setProperty("--offset", offset);
+				return marker;
+			};
+
+			const createMiniCube = (pattern) => {
+				const cube = document.createElement("div");
+				cube.className = "oll-cube";
+				const edgeMarkers = [];
+				const edgeMap = {
+					1: { side: "top", offset: 1 },
+					3: { side: "left", offset: 1 },
+					5: { side: "right", offset: 1 },
+					7: { side: "bottom", offset: 1 },
+				};
+
+				pattern.face.forEach((isYellow, index) => {
+					const cell = document.createElement("div");
+					cell.className = "oll-cell";
+					if (isYellow) {
+						cell.classList.add("oll-cell--yellow");
+						if (edgeMap[index]) {
+							edgeMarkers.push(edgeMap[index]);
+						}
+					}
+					cube.appendChild(cell);
+				});
+
+				edgeMarkers.forEach((marker) => {
+					cube.appendChild(createMarker(marker.side, marker.offset));
+				});
+
+				return cube;
+			};
+
+			const ollTable = document.getElementById("ollTable");
+			if (ollTable) {
+				ollAlgorithms.forEach((ollCase) => {
+					const link = document.createElement("a");
+					link.href = `algs/alg.html?alg=${encodeURIComponent(ollCase.algorithm)}`;
+					link.className = "ollCard";
+
+					const cube = createMiniCube(ollCase.pattern);
+					const info = document.createElement("div");
+					info.className = "oll-details";
+					info.innerHTML = `
+						<h3>${ollCase.caseName} - ${ollCase.notation}</h3>
+						<p><strong>Notation:</strong> ${ollCase.notation}</p>
+						<p><strong>Algorithm:</strong> ${ollCase.algorithm}</p>
+						<p>${ollCase.caseName} - <span class="oll-probability">probability = ${ollCase.probability}</span></p>
+					`;
+
+					link.appendChild(cube);
+					link.appendChild(info);
+					ollTable.appendChild(link);
+				});
+			}
 		</script>
 	</body>
 </html>

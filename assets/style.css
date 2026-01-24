@@ -114,6 +114,114 @@ body {
 	flex-direction: column;
 	margin: 15px;
 }
+.ollOverview {
+	margin-top: 60px;
+}
+.ollTitle p {
+	margin-top: -20px;
+	font-size: 1.1rem;
+	color: #444;
+}
+.ollTable {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+	gap: 24px;
+	max-width: 1200px;
+	margin: 40px auto 0;
+	padding: 0 40px 40px;
+}
+.ollCard {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	padding: 16px 20px;
+	border-radius: 14px;
+	border: 1px solid #e0e0e0;
+	background: #fafafa;
+	box-shadow: 0 8px 18px rgba(0, 0, 0, 0.05);
+	text-decoration: none;
+	color: black;
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.ollCard:hover {
+	transform: translateY(-4px);
+	box-shadow: 0 12px 22px rgba(0, 0, 0, 0.1);
+}
+.oll-cube {
+	position: relative;
+	--cell-size: 26px;
+	--gap-size: 4px;
+	width: calc(var(--cell-size) * 3 + var(--gap-size) * 2 + 12px);
+	height: calc(var(--cell-size) * 3 + var(--gap-size) * 2 + 12px);
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	grid-template-rows: repeat(3, 1fr);
+	gap: var(--gap-size);
+	padding: 6px;
+	background: #111;
+	border-radius: 10px;
+	box-shadow: inset 0 0 0 2px #333;
+}
+.oll-cell {
+	background: #9e9e9e;
+	border-radius: 2px;
+}
+.oll-cell--yellow {
+	background: #f2e600;
+}
+.oll-marker {
+	position: absolute;
+	background: #f2e600;
+	border-radius: 2px;
+}
+.oll-marker[data-side="top"],
+.oll-marker[data-side="bottom"] {
+	width: 18px;
+	height: 4px;
+}
+.oll-marker[data-side="left"],
+.oll-marker[data-side="right"] {
+	width: 4px;
+	height: 18px;
+}
+.oll-marker[data-side="top"] {
+	top: 2px;
+	left: calc(
+		6px + (var(--cell-size) + var(--gap-size)) * var(--offset) +
+			(var(--cell-size) - 18px) / 2
+	);
+}
+.oll-marker[data-side="bottom"] {
+	bottom: 2px;
+	left: calc(
+		6px + (var(--cell-size) + var(--gap-size)) * var(--offset) +
+			(var(--cell-size) - 18px) / 2
+	);
+}
+.oll-marker[data-side="left"] {
+	left: 2px;
+	top: calc(
+		6px + (var(--cell-size) + var(--gap-size)) * var(--offset) +
+			(var(--cell-size) - 18px) / 2
+	);
+}
+.oll-marker[data-side="right"] {
+	right: 2px;
+	top: calc(
+		6px + (var(--cell-size) + var(--gap-size)) * var(--offset) +
+			(var(--cell-size) - 18px) / 2
+	);
+}
+.oll-details h3 {
+	margin: 0 0 6px;
+	font-size: 1.2rem;
+}
+.oll-details p {
+	margin: 4px 0;
+}
+.oll-probability {
+	color: #2b65ff;
+}
 
 .help {
 	/* position: fixed; */
