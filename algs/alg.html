@@ -70,6 +70,10 @@
 				border-radius: 8px;
 				cursor: pointer;
 				font-size: 16px;
+				display: inline-flex;
+				align-items: center;
+				justify-content: center;
+				gap: 6px;
 			}
 			.control-button:disabled {
 				opacity: 0.5;
@@ -92,10 +96,16 @@
 				left: 50%;
 				bottom: 8%;
 				transform: translate(-50%, 50%);
-				font-size: 28px;
+				font-size: 36px;
+				font-weight: 600;
 				text-align: center;
 				pointer-events: none;
 				letter-spacing: 1px;
+				background: rgba(0, 0, 0, 0.55);
+				padding: 12px 18px;
+				border-radius: 14px;
+				border: 1px solid rgba(255, 255, 255, 0.15);
+				box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
 			}
 			.algorithm-display span {
 				display: inline-block;
@@ -119,10 +129,16 @@
 				<p>Drag to orbit the cube while the moves play.</p>
 			</div>
 			<div class="controls">
-				<button class="control-button" id="togglePlayback">
+				<button class="control-button" id="stepBack" title="Step back (←)">
+					<i class="fas fa-backward"></i>
+				</button>
+				<button class="control-button" id="togglePlayback" title="Pause/Play (Space)">
 					<i class="fas fa-play"></i>
 				</button>
-				<button class="control-button" id="restartPlayback">
+				<button class="control-button" id="stepForward" title="Step forward (→)">
+					<i class="fas fa-forward"></i>
+				</button>
+				<button class="control-button" id="restartPlayback" title="Reset">
 					<i class="fas fa-history"></i>
 				</button>
 			</div>
@@ -135,6 +151,8 @@
 			const algorithmDisplay = document.getElementById("algorithmDisplay");
 			const togglePlayback = document.getElementById("togglePlayback");
 			const restartPlayback = document.getElementById("restartPlayback");
+			const stepBack = document.getElementById("stepBack");
+			const stepForward = document.getElementById("stepForward");
 			const algTitle = document.getElementById("algTitle");
 
 			let scene;
@@ -147,8 +165,10 @@
 			let isAnimating = false;
 			let isScrambled = false;
 			let isPlayingForward = false;
+			let isManualMode = false;
 			let currentSpeed = 60;
 			let activeRunId = 0;
+			let currentMoveIndex = 0;
 
 			const DEFAULT_ALGORITHM = "R U R' U R U2 R'";
 
@@ -173,6 +193,15 @@
 					scene
 				);
 				light.intensity = 2;
+				light.groundColor = new BABYLON.Color3(1, 1, 1);
+
+				const fillLight = new BABYLON.HemisphericLight(
+					"fillLight",
+					new BABYLON.Vector3(0, -1, 0),
+					scene
+				);
+				fillLight.intensity = 0.8;
+				scene.ambientColor = new BABYLON.Color3(0.9, 0.9, 0.9);
 
 				const skybox = BABYLON.MeshBuilder.CreateBox("skyBox", { size: 100.0 }, scene);
 				const skyboxMaterial = new BABYLON.StandardMaterial("skyBoxMaterial", scene);
@@ -357,36 +386,110 @@
 				icon.classList.toggle("fa-pause", !showPlay);
 			};
 
+			const updateManualControls = () => {
+				togglePlayback.disabled = isManualMode;
+			};
+
+			const updateActiveFromIndex = () => {
+				if (currentMoveIndex >= 0 && currentMoveIndex < moveQueue.length) {
+					setActiveMove(currentMoveIndex);
+				} else {
+					setActiveMove(-1);
+				}
+			};
+
+			const enterManualMode = () => {
+				if (!isManualMode) {
+					isManualMode = true;
+					activeRunId += 1;
+					isPaused = true;
+					isAnimating = false;
+					isPlayingForward = false;
+					updateToggleIcon();
+					updateManualControls();
+				}
+			};
+
 			const scrambleCube = async () => {
 				const runId = ++activeRunId;
 				isAnimating = true;
 				isScrambled = false;
 				isPlayingForward = false;
 				isPaused = false;
+				isManualMode = false;
 				const setupMoves = invertMoves(moveQueue);
 				togglePlayback.disabled = true;
 				updateToggleIcon();
+				updateManualControls();
 				await playMoves(setupMoves, { speed: 120, highlight: false, runId });
 				if (runId !== activeRunId) return;
 				isAnimating = false;
 				isScrambled = true;
+				currentMoveIndex = 0;
 				togglePlayback.disabled = false;
 				updateToggleIcon();
+				updateManualControls();
+				updateActiveFromIndex();
 			};
 
 			const playForward = async () => {
-				if (isAnimating || !isScrambled) return;
+				if (isAnimating || !isScrambled || isManualMode) return;
 				const runId = ++activeRunId;
 				isAnimating = true;
 				isPlayingForward = true;
 				isPaused = false;
 				updateToggleIcon();
-				await playMoves(moveQueue, { speed: 60, highlight: true, runId });
+				currentSpeed = 60;
+				for (let index = currentMoveIndex; index < moveQueue.length; index++) {
+					while (isPaused && runId === activeRunId) {
+						await new Promise((resolve) => setTimeout(resolve, 100));
+					}
+					if (runId !== activeRunId) return;
+					setActiveMove(index);
+					const rotation = moveToRotation(moveQueue[index]);
+					await rotateLayer(rotation.axis, rotation.layer, rotation.angle);
+					if (runId !== activeRunId) return;
+					currentMoveIndex = index + 1;
+				}
+				setActiveMove(-1);
 				if (runId !== activeRunId) return;
 				isAnimating = false;
 				isPlayingForward = false;
 				isPaused = false;
 				updateToggleIcon();
+			};
+
+			const stepForwardMove = async () => {
+				enterManualMode();
+				if (isAnimating || !isScrambled) return;
+				if (currentMoveIndex >= moveQueue.length) return;
+				isAnimating = true;
+				setActiveMove(currentMoveIndex);
+				const rotation = moveToRotation(moveQueue[currentMoveIndex]);
+				await rotateLayer(rotation.axis, rotation.layer, rotation.angle);
+				currentMoveIndex += 1;
+				isAnimating = false;
+				updateActiveFromIndex();
+			};
+
+			const stepBackMove = async () => {
+				enterManualMode();
+				if (isAnimating || !isScrambled) return;
+				if (currentMoveIndex <= 0) return;
+				isAnimating = true;
+				const previousMove = moveQueue[currentMoveIndex - 1];
+				const inverseMove = {
+					...previousMove,
+					isPrime: previousMove.isDouble
+						? previousMove.isPrime
+						: !previousMove.isPrime,
+				};
+				setActiveMove(currentMoveIndex - 1);
+				const rotation = moveToRotation(inverseMove);
+				await rotateLayer(rotation.axis, rotation.layer, rotation.angle);
+				currentMoveIndex -= 1;
+				isAnimating = false;
+				updateActiveFromIndex();
 			};
 
 			const readAlgorithmFromQuery = () => {
@@ -412,6 +515,7 @@
 
 			togglePlayback.addEventListener("click", () => {
 				if (!isScrambled) return;
+				if (isManualMode) return;
 				if (!isPlayingForward) {
 					playForward();
 					return;
@@ -426,8 +530,35 @@
 				isAnimating = false;
 				isPlayingForward = false;
 				isScrambled = false;
+				isManualMode = false;
+				currentMoveIndex = 0;
 				updateToggleIcon();
+				updateManualControls();
 				initializeAlgorithm();
+			});
+
+			stepForward.addEventListener("click", () => {
+				stepForwardMove();
+			});
+
+			stepBack.addEventListener("click", () => {
+				stepBackMove();
+			});
+
+			window.addEventListener("keydown", (event) => {
+				if (event.key === "ArrowRight") {
+					event.preventDefault();
+					stepForwardMove();
+				}
+				if (event.key === "ArrowLeft") {
+					event.preventDefault();
+					stepBackMove();
+				}
+				if (event.key === " ") {
+					event.preventDefault();
+					if (isManualMode) return;
+					togglePlayback.click();
+				}
 			});
 
 			initScene();

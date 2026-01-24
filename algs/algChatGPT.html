@@ -27,12 +27,17 @@
       height: 100%;
     }
     .alg {
-      font-size: 30px;
+      font-size: 38px;
       position: absolute;
       left: 50%;
       top: 90%;
       transform: translate(-50%, -50%);
       color: white;
+      background: rgba(0, 0, 0, 0.55);
+      padding: 12px 18px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
     }
     .arrowBack, .resetButton, .click, .pauseButton, .stepButtons {
       position: absolute;
@@ -65,6 +70,10 @@
       right: 15%;
       top: 5%;
       cursor: pointer;
+    }
+    .pauseButton.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
     }
     .stepButtons {
       right: 5%;
@@ -119,6 +128,7 @@
     let scene, camera, pivot, cubies = [];
     const algDisplay = document.getElementById("algDisplay");
     let pause = false;
+    let manualMode = false;
     let currentIndex = 0;
     let moves = [];
     let isAnimating = false;
@@ -132,9 +142,11 @@
 
       const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
       light.intensity = 2;
+      light.groundColor = new BABYLON.Color3(1, 1, 1);
 
       const lightBottom = new BABYLON.DirectionalLight("lightBottom", new BABYLON.Vector3(0, -1, 0), scene);
       lightBottom.intensity = 2;
+      scene.ambientColor = new BABYLON.Color3(0.9, 0.9, 0.9);
 
       const skybox = BABYLON.MeshBuilder.CreateBox("skyBox", { size: 100.0 }, scene);
       const skyboxMaterial = new BABYLON.StandardMaterial("skyBoxMaterial", scene);
@@ -222,22 +234,38 @@
       });
     };
 
-    document.getElementById("pauseButton").addEventListener("click", () => {
-      if (isAnimating) return;
-      pause = !pause;
-      const pauseIcon = document.getElementById("pauseButton").getElementsByTagName("i")[0];
+    const pauseButton = document.getElementById("pauseButton");
+
+    const updatePauseIcon = () => {
+      const pauseIcon = pauseButton.getElementsByTagName("i")[0];
       if (pause) {
         pauseIcon.classList.remove("fa-pause");
         pauseIcon.classList.add("fa-play");
       } else {
         pauseIcon.classList.remove("fa-play");
         pauseIcon.classList.add("fa-pause");
-        rotateNext();
       }
+      pauseButton.classList.toggle("disabled", manualMode);
+    };
+
+    const enterManualMode = () => {
+      if (!manualMode) {
+        manualMode = true;
+        pause = true;
+        updatePauseIcon();
+      }
+    };
+
+    pauseButton.addEventListener("click", () => {
+      if (isAnimating || manualMode) return;
+      pause = !pause;
+      updatePauseIcon();
+      if (!pause) rotateNext();
     });
 
     document.getElementById("stepBack").addEventListener("click", () => {
       if (isAnimating || currentIndex <= 0) return;
+      enterManualMode();
       currentIndex--;
       isAnimating = true;
       const { axis, direction, layer } = moves[currentIndex];
@@ -251,6 +279,7 @@
 
     document.getElementById("stepForward").addEventListener("click", () => {
       if (isAnimating || currentIndex >= moves.length) return;
+      enterManualMode();
       isAnimating = true;
       const { axis, direction, layer } = moves[currentIndex];
       const algItems = algDisplay.getElementsByTagName("p");
@@ -265,8 +294,24 @@
     initScene();
     pivot = new BABYLON.TransformNode("pivot", scene);
     executeAlgorithm("R U R' U R U2' R'");
+    updatePauseIcon();
     engine.runRenderLoop(() => scene.render());
     window.addEventListener("resize", () => engine.resize());
+    window.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowRight") {
+        event.preventDefault();
+        document.getElementById("stepForward").click();
+      }
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        document.getElementById("stepBack").click();
+      }
+      if (event.key === " ") {
+        event.preventDefault();
+        if (manualMode) return;
+        pauseButton.click();
+      }
+    });
   </script>
 </body>
 </html>
