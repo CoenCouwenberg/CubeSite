@@ -140,6 +140,13 @@
 					</div>
 				</div>
 			</div>
+			<div class="ollOverview" id="ollOverview">
+				<div class="section2title ollTitle">
+					<h2>OLL algorithm overview</h2>
+					<p>Choose any OLL case below to practice the full algorithm.</p>
+				</div>
+				<div class="ollTable" id="ollTable"></div>
+			</div>
 
 			<div class="help">
 				<a href="help.html">
@@ -247,6 +254,411 @@
 			window.addEventListener("resize", function () {
 				engine.resize();
 			});
+		</script>
+		<script>
+			const OLL_DATA_URL = "assets/data/oll.json";
+
+			const MOVE_CONFIGS = {
+				R: { axis: "x", layers: [1], dir: -1 },
+				L: { axis: "x", layers: [-1], dir: 1 },
+				U: { axis: "y", layers: [1], dir: 1 },
+				D: { axis: "y", layers: [-1], dir: -1 },
+				F: { axis: "z", layers: [1], dir: -1 },
+				B: { axis: "z", layers: [-1], dir: 1 },
+				M: { axis: "x", layers: [0], dir: 1 },
+				E: { axis: "y", layers: [0], dir: -1 },
+				S: { axis: "z", layers: [0], dir: -1 },
+				r: { axis: "x", layers: [1, 0], dir: -1 },
+				l: { axis: "x", layers: [-1, 0], dir: 1 },
+				u: { axis: "y", layers: [1, 0], dir: 1 },
+				d: { axis: "y", layers: [-1, 0], dir: -1 },
+				f: { axis: "z", layers: [1, 0], dir: -1 },
+				b: { axis: "z", layers: [-1, 0], dir: 1 },
+				x: { axis: "x", layers: [-1, 0, 1], dir: -1 },
+				y: { axis: "y", layers: [-1, 0, 1], dir: 1 },
+				z: { axis: "z", layers: [-1, 0, 1], dir: -1 },
+			};
+
+			const FACE_COLORS = {
+				U: "Y",
+				D: "W",
+				F: "G",
+				B: "B",
+				R: "R",
+				L: "O",
+			};
+
+			const FACE_NORMALS = {
+				U: [0, 1, 0],
+				D: [0, -1, 0],
+				F: [0, 0, 1],
+				B: [0, 0, -1],
+				R: [1, 0, 0],
+				L: [-1, 0, 0],
+			};
+
+			const normalToFace = (normal) => {
+				const key = normal.join(",");
+				const lookup = {
+					"0,1,0": "U",
+					"0,-1,0": "D",
+					"0,0,1": "F",
+					"0,0,-1": "B",
+					"1,0,0": "R",
+					"-1,0,0": "L",
+				};
+				return lookup[key];
+			};
+
+			const rotateVector = (vector, axis, dir) => {
+				const [x, y, z] = vector;
+				switch (axis) {
+					case "x":
+						return dir === 1 ? [x, -z, y] : [x, z, -y];
+					case "y":
+						return dir === 1 ? [z, y, -x] : [-z, y, x];
+					case "z":
+						return dir === 1 ? [-y, x, z] : [y, -x, z];
+					default:
+						return vector;
+				}
+			};
+
+			const createSolvedCubies = () => {
+				const cubies = [];
+				for (let x = -1; x <= 1; x += 1) {
+					for (let y = -1; y <= 1; y += 1) {
+						for (let z = -1; z <= 1; z += 1) {
+							const stickers = {};
+							if (y === 1) stickers.U = FACE_COLORS.U;
+							if (y === -1) stickers.D = FACE_COLORS.D;
+							if (z === 1) stickers.F = FACE_COLORS.F;
+							if (z === -1) stickers.B = FACE_COLORS.B;
+							if (x === 1) stickers.R = FACE_COLORS.R;
+							if (x === -1) stickers.L = FACE_COLORS.L;
+							cubies.push({ x, y, z, stickers });
+						}
+					}
+				}
+				return cubies;
+			};
+
+			const rotateCubie = (cubie, axis, dir) => {
+				[cubie.x, cubie.y, cubie.z] = rotateVector([cubie.x, cubie.y, cubie.z], axis, dir);
+				const rotatedStickers = {};
+				Object.entries(cubie.stickers).forEach(([face, color]) => {
+					const normal = FACE_NORMALS[face];
+					const rotatedNormal = rotateVector(normal, axis, dir);
+					const rotatedFace = normalToFace(rotatedNormal);
+					if (rotatedFace) {
+						rotatedStickers[rotatedFace] = color;
+					}
+				});
+				cubie.stickers = rotatedStickers;
+			};
+
+			const rotateLayers = (cubies, axis, layers, dir, turns) => {
+				for (let turn = 0; turn < turns; turn += 1) {
+					cubies.forEach((cubie) => {
+						if (layers.includes(cubie[axis])) {
+							rotateCubie(cubie, axis, dir);
+						}
+					});
+				}
+			};
+
+			const normalizeAlgorithm = (algorithm) =>
+				algorithm
+					.replace(/[()\[\]]/g, " ")
+					.replace(/,/g, " ")
+					.replace(/\s+/g, " ")
+					.trim();
+
+			const composeAlgorithm = (ollCase) =>
+				[ollCase.rotations, ollCase.auf, ollCase.algorithm]
+					.filter((value) => value && value.trim())
+					.join(" ")
+					.trim();
+
+			const stripPreviewRotations = (algorithm) => {
+				const normalized = normalizeAlgorithm(algorithm);
+				if (!normalized) return normalized;
+				return normalized
+					.split(" ")
+					.filter((token) => !/^[xz]/.test(token))
+					.join(" ");
+			};
+
+			const parseAlgorithm = (algorithm) => {
+				const normalized = normalizeAlgorithm(algorithm);
+				if (!normalized) return [];
+				return normalized.split(" ").map((token) => {
+					const match = token.match(/^([RULDFBrludfbMESxyz])([2]?)(['`]?)$/);
+					if (!match) {
+						throw new Error(`Invalid move: ${token}`);
+					}
+					return {
+						face: match[1],
+						isDouble: match[2] === "2",
+						isPrime: match[3] === "'" || match[3] === "`",
+						raw: token,
+					};
+				});
+			};
+
+			const applyMove = (cubies, move) => {
+				const config = MOVE_CONFIGS[move.face];
+				if (!config) {
+					throw new Error(`Invalid move: ${move.raw}`);
+				}
+				const turns = move.isDouble ? 2 : 1;
+				const dir = config.dir * (move.isPrime ? -1 : 1);
+				rotateLayers(cubies, config.axis, config.layers, dir, turns);
+			};
+
+			const invertMoves = (moves) =>
+				[...moves].reverse().map((move) => ({
+					...move,
+					isPrime: move.isDouble ? move.isPrime : !move.isPrime,
+				}));
+
+			const findCubie = (cubies, x, y, z) =>
+				cubies.find((cubie) => cubie.x === x && cubie.y === y && cubie.z === z);
+
+			const cloneCubies = (cubies) =>
+				cubies.map((cubie) => ({
+					x: cubie.x,
+					y: cubie.y,
+					z: cubie.z,
+					stickers: { ...cubie.stickers },
+				}));
+
+			const CENTER_COORDS = {
+				U: [0, 1, 0],
+				D: [0, -1, 0],
+				F: [0, 0, 1],
+				B: [0, 0, -1],
+				R: [1, 0, 0],
+				L: [-1, 0, 0],
+			};
+
+			const centersMatch = (cubies) =>
+				Object.entries(CENTER_COORDS).every(([face, [x, y, z]]) => {
+					const center = findCubie(cubies, x, y, z);
+					return center && center.stickers[face] === FACE_COLORS[face];
+				});
+
+			const applyCubeTurn = (cubies, face, turns) => {
+				if (!turns) return;
+				const normalizedTurns = turns % 4;
+				if (!normalizedTurns) return;
+				let raw = face;
+				let isDouble = false;
+				let isPrime = false;
+				if (normalizedTurns === 2) {
+					isDouble = true;
+					raw = `${face}2`;
+				} else if (normalizedTurns === 3) {
+					isPrime = true;
+					raw = `${face}'`;
+				}
+				const move = { face, isDouble, isPrime, raw };
+				applyMove(cubies, move);
+			};
+
+			const normalizeOrientation = (cubies) => {
+				if (centersMatch(cubies)) return true;
+				for (let xTurns = 0; xTurns < 4; xTurns += 1) {
+					for (let yTurns = 0; yTurns < 4; yTurns += 1) {
+						for (let zTurns = 0; zTurns < 4; zTurns += 1) {
+							const test = cloneCubies(cubies);
+							applyCubeTurn(test, "x", xTurns);
+							applyCubeTurn(test, "y", yTurns);
+							applyCubeTurn(test, "z", zTurns);
+							if (centersMatch(test)) {
+								applyCubeTurn(cubies, "x", xTurns);
+								applyCubeTurn(cubies, "y", yTurns);
+								applyCubeTurn(cubies, "z", zTurns);
+								return true;
+							}
+						}
+					}
+				}
+				return false;
+			};
+
+			const U_INDEX_MAP = {
+				"-1,-1": 0,
+				"0,-1": 1,
+				"1,-1": 2,
+				"-1,0": 3,
+				"0,0": 4,
+				"1,0": 5,
+				"-1,1": 6,
+				"0,1": 7,
+				"1,1": 8,
+			};
+
+			const getUFace = (cubies) => {
+				const face = Array(9).fill("");
+				cubies.forEach((cubie) => {
+					if (cubie.y === 1 && cubie.stickers.U) {
+						const index = U_INDEX_MAP[`${cubie.x},${cubie.z}`];
+						face[index] = cubie.stickers.U;
+					}
+				});
+				return face;
+			};
+
+			const getEdgeMarkers = (cubies) => {
+				const edgeDefinitions = {
+					top: { position: [0, 1, -1], face: "B" },
+					left: { position: [-1, 1, 0], face: "L" },
+					right: { position: [1, 1, 0], face: "R" },
+					bottom: { position: [0, 1, 1], face: "F" },
+				};
+				return Object.entries(edgeDefinitions).reduce((markers, [side, definition]) => {
+					const [x, y, z] = definition.position;
+					const cubie = findCubie(cubies, x, y, z);
+					if (!cubie) return markers;
+					const uColor = cubie.stickers.U;
+					const sideColor = cubie.stickers[definition.face];
+					markers[side] = sideColor === FACE_COLORS.U && uColor !== FACE_COLORS.U;
+					return markers;
+				}, {});
+			};
+
+			const buildCasePattern = (ollCase) => {
+				const cubies = createSolvedCubies();
+				const algorithm = stripPreviewRotations(composeAlgorithm(ollCase));
+				const moves = parseAlgorithm(algorithm);
+				const inverseMoves = invertMoves(moves);
+				inverseMoves.forEach((move) => applyMove(cubies, move));
+				normalizeOrientation(cubies);
+				return {
+					U: getUFace(cubies),
+					markers: getEdgeMarkers(cubies),
+				};
+			};
+
+			const createMarker = (side, offset) => {
+				const marker = document.createElement("span");
+				marker.className = "oll-marker";
+				marker.dataset.side = side;
+				marker.style.setProperty("--offset", offset);
+				return marker;
+			};
+
+			const createMiniCube = (pattern) => {
+				const cubeElement = document.createElement("div");
+				cubeElement.className = "oll-cube";
+				pattern.U.forEach((color) => {
+					const cell = document.createElement("div");
+					cell.className = "oll-cell";
+					if (color === FACE_COLORS.U) {
+						cell.classList.add("oll-cell--yellow");
+					}
+					cubeElement.appendChild(cell);
+				});
+
+				const markerOffsets = {
+					top: 1,
+					left: 1,
+					right: 1,
+					bottom: 1,
+				};
+				Object.entries(markerOffsets).forEach(([side, offset]) => {
+					if (pattern.markers[side]) {
+						cubeElement.appendChild(createMarker(side, offset));
+					}
+				});
+
+				return cubeElement;
+			};
+
+			const createCaseRow = (ollCase, groupName) => {
+				const link = document.createElement("a");
+				const fullAlgorithm = composeAlgorithm(ollCase);
+				link.href = `algs/alg.html?alg=${encodeURIComponent(fullAlgorithm)}`;
+				link.className = "oll-row";
+				link.setAttribute("aria-label", `OLL ${ollCase.number} ${groupName}`);
+
+				let pattern;
+				try {
+					pattern = buildCasePattern(ollCase);
+				} catch (error) {
+					pattern = { U: Array(9).fill(FACE_COLORS.U), markers: {} };
+				}
+
+				const number = document.createElement("div");
+				number.className = "oll-row__number";
+				number.textContent = ollCase.number;
+
+				const cube = createMiniCube(pattern);
+				const info = document.createElement("div");
+				info.className = "oll-row__info";
+				const notationLabel = ollCase.code || `OLL ${ollCase.number}`;
+				const probabilityLabel = ollCase.probability || "1/54";
+				info.innerHTML = `
+					<div class="oll-row__title">OLL ${ollCase.number}</div>
+					<div class="oll-row__algorithm">${fullAlgorithm}</div>
+					<div class="oll-row__meta">
+						<span class="oll-row__notation">Notation: ${notationLabel}</span>
+						<span class="oll-probability">probability = ${probabilityLabel}</span>
+					</div>
+				`;
+
+				link.appendChild(number);
+				link.appendChild(cube);
+				link.appendChild(info);
+				return link;
+			};
+
+			const loadOllGroups = async () => {
+				const response = await fetch(OLL_DATA_URL, { cache: "no-store" });
+				if (!response.ok) {
+					throw new Error(`Unable to load OLL data (${response.status})`);
+				}
+				const data = await response.json();
+				return Array.isArray(data.groups) ? data.groups : [];
+			};
+
+			const renderOllGroups = (groups, ollTable) => {
+				groups.forEach((group) => {
+					const section = document.createElement("section");
+					section.className = "oll-group";
+
+					const title = document.createElement("h3");
+					title.className = "oll-group__title";
+					title.textContent = group.name;
+					section.appendChild(title);
+
+					const cases = document.createElement("div");
+					cases.className = "oll-group__cases";
+					group.cases.forEach((ollCase) => {
+						cases.appendChild(createCaseRow(ollCase, group.name));
+					});
+
+					section.appendChild(cases);
+					ollTable.appendChild(section);
+				});
+			};
+
+			const ollTable = document.getElementById("ollTable");
+			if (ollTable) {
+				loadOllGroups()
+					.then((groups) => {
+						renderOllGroups(groups, ollTable);
+					})
+					.catch((error) => {
+						const message = document.createElement("p");
+						message.className = "oll-error";
+						message.textContent =
+							"Unable to load OLL data. Start a local server (python -m http.server 4173) and reload.";
+						ollTable.appendChild(message);
+						console.error(error);
+					});
+			}
 		</script>
 	</body>
 </html>
