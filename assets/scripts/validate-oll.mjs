@@ -119,7 +119,7 @@ const normalizeAlgorithm = (algorithm) =>
 		.trim();
 
 const composeAlgorithm = (ollCase) =>
-	[ollCase.rotations, ollCase.auf, ollCase.algorithm]
+	[ollCase.rotations, ollCase.setup, ollCase.algorithm, ollCase.auf]
 		.filter((value) => value && value.trim())
 		.join(" ")
 		.trim();

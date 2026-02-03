@@ -375,7 +375,7 @@
 					.trim();
 
 			const composeAlgorithm = (ollCase) =>
-				[ollCase.rotations, ollCase.auf, ollCase.algorithm]
+				[ollCase.rotations, ollCase.setup, ollCase.algorithm, ollCase.auf]
 					.filter((value) => value && value.trim())
 					.join(" ")
 					.trim();
@@ -579,7 +579,23 @@
 			const createCaseRow = (ollCase, groupName) => {
 				const link = document.createElement("a");
 				const fullAlgorithm = composeAlgorithm(ollCase);
-				link.href = `algs/alg.html?alg=${encodeURIComponent(fullAlgorithm)}`;
+				const setupAlgorithm = [ollCase.rotations, ollCase.setup]
+					.filter((value) => value && value.trim())
+					.join(" ")
+					.trim();
+				const resolvedSetup = setupAlgorithm || "None";
+				const algorithmParam = [ollCase.algorithm, ollCase.auf]
+					.filter((value) => value && value.trim())
+					.join(" ")
+					.trim();
+				const params = new URLSearchParams();
+				if (setupAlgorithm) {
+					params.set("setup", setupAlgorithm);
+				}
+				if (algorithmParam) {
+					params.set("alg", algorithmParam);
+				}
+				link.href = `algs/alg.html?${params.toString()}`;
 				link.className = "oll-row";
 				link.setAttribute("aria-label", `OLL ${ollCase.number} ${groupName}`);
 
@@ -601,7 +617,10 @@
 				const probabilityLabel = ollCase.probability || "1/54";
 				info.innerHTML = `
 					<div class="oll-row__title">OLL ${ollCase.number}</div>
-					<div class="oll-row__algorithm">${fullAlgorithm}</div>
+					<div class="oll-row__algorithm">
+						<div><strong>Setup:</strong> ${resolvedSetup}</div>
+						<div><strong>Standard Alg:</strong> ${ollCase.algorithm}</div>
+					</div>
 					<div class="oll-row__meta">
 						<span class="oll-row__notation">Notation: ${notationLabel}</span>
 						<span class="oll-probability">probability = ${probabilityLabel}</span>

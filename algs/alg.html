@@ -126,6 +126,7 @@
 			</div>
 			<div class="header">
 				<h1 id="algTitle">Algorithm demo</h1>
+				<p id="setupTitle"></p>
 				<p>Drag to orbit the cube while the moves play.</p>
 			</div>
 			<div class="controls">
@@ -154,6 +155,7 @@
 			const stepBack = document.getElementById("stepBack");
 			const stepForward = document.getElementById("stepForward");
 			const algTitle = document.getElementById("algTitle");
+			const setupTitle = document.getElementById("setupTitle");
 
 			let scene;
 			let camera;
@@ -161,6 +163,7 @@
 			let holder;
 			let cubies = [];
 			let moveQueue = [];
+			let setupQueue = [];
 			let isPaused = false;
 			let isAnimating = false;
 			let isScrambled = false;
@@ -171,6 +174,7 @@
 			let currentMoveIndex = 0;
 
 			const DEFAULT_ALGORITHM = "R U R' U R U2 R'";
+			const DEFAULT_SETUP = "";
 
 			const initScene = () => {
 				scene = new BABYLON.Scene(engine);
@@ -434,11 +438,12 @@
 				isPlayingForward = false;
 				isPaused = false;
 				isManualMode = false;
-				const setupMoves = invertMoves(moveQueue);
 				togglePlayback.disabled = true;
 				updateToggleIcon();
 				updateManualControls();
-				await playMoves(setupMoves, { speed: 120, highlight: false, runId });
+				if (setupQueue.length > 0) {
+					await playMoves(setupQueue, { speed: 120, highlight: false, runId });
+				}
 				if (runId !== activeRunId) return;
 				isAnimating = false;
 				isScrambled = true;
@@ -515,11 +520,20 @@
 				return alg ? decodeURIComponent(alg).trim() : DEFAULT_ALGORITHM;
 			};
 
+			const readSetupFromQuery = () => {
+				const params = new URLSearchParams(window.location.search);
+				const setup = params.get("setup");
+				return setup ? decodeURIComponent(setup).trim() : DEFAULT_SETUP;
+			};
+
 			const initializeAlgorithm = () => {
 				try {
 					const algorithm = readAlgorithmFromQuery();
+					const setup = readSetupFromQuery();
+					setupTitle.textContent = setup ? `Setup: ${setup}` : "";
 					algTitle.textContent = `Algorithm: ${algorithm}`;
 					moveQueue = parseAlgorithm(algorithm);
+					setupQueue = setup ? parseAlgorithm(setup) : [];
 					updateAlgorithmDisplay(moveQueue);
 					setActiveMove(-1);
 					resetCube();
