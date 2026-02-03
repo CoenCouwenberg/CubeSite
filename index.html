@@ -422,17 +422,6 @@
 					isPrime: move.isDouble ? move.isPrime : !move.isPrime,
 				}));
 
-			const formatMove = (move) =>
-				`${move.face}${move.isDouble ? "2" : ""}${move.isPrime ? "'" : ""}`;
-
-			const formatMoves = (moves) => moves.map(formatMove).join(" ");
-
-			const invertAlgorithm = (algorithm) => {
-				const moves = parseAlgorithm(algorithm);
-				const inverted = invertMoves(moves);
-				return formatMoves(inverted);
-			};
-
 			const findCubie = (cubies, x, y, z) =>
 				cubies.find((cubie) => cubie.x === x && cubie.y === y && cubie.z === z);
 
@@ -594,7 +583,7 @@
 					.filter((value) => value && value.trim())
 					.join(" ")
 					.trim();
-				const resolvedSetup = setupAlgorithm || invertAlgorithm(fullAlgorithm);
+				const resolvedSetup = setupAlgorithm || "None";
 				link.href = `algs/alg.html?alg=${encodeURIComponent(fullAlgorithm)}`;
 				link.className = "oll-row";
 				link.setAttribute("aria-label", `OLL ${ollCase.number} ${groupName}`);
