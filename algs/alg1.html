@@ -344,7 +344,7 @@
 						console.log(cubies.length);
 						// Draaing van de cube, kan ook tegen de klok in wat gelijk staat aan '
 						for (let cubie of newCubies) cubie.setParent(pivot);
-						const angle = isClockwise ? Math.PI / 2 : -Math.PI / 2;
+						const angle = isClockwise ? -Math.PI / 2 : Math.PI / 2;
 						console.log("Clockwise: " + isClockwise);
 						const animation = BABYLON.Animation.CreateAndStartAnimation(
 							"rotate",

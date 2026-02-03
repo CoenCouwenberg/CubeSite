@@ -289,7 +289,7 @@
 				};
 
 				const { axis, layer, invert } = faceMap[move.face];
-				let direction = move.isPrime ? -1 : 1;
+				let direction = move.isPrime ? 1 : -1;
 				if (invert) direction *= -1;
 				const angle = move.isDouble
 					? Math.PI * direction
