@@ -295,17 +295,19 @@ const getOllPreviewPattern = (algString) => {
 };
 
 const renderOllPreviewSvg = (pattern) => {
-	const cell = 10;
+	const cell = 14;
 	const gridSize = 7;
 	const size = cell * gridSize;
-	const stroke = 2;
+	const stroke = 2.5;
+	const sideStroke = 1.5;
 	const yellow = "#f2e600";
-	const dark = "#3a3a3a";
-	const drawCell = (col, row, isYellow) => {
-		const fill = isYellow ? yellow : dark;
+	const gray = "#9b9b9b";
+	const drawCell = (col, row, isYellow, isSide = false) => {
+		const fill = isYellow ? yellow : gray;
 		const x = col * cell;
 		const y = row * cell;
-		return `<rect x="${x}" y="${y}" width="${cell}" height="${cell}" fill="${fill}" stroke="#000" stroke-width="${stroke}" />`;
+		const strokeWidth = isSide ? sideStroke : stroke;
+		return `<rect x="${x}" y="${y}" width="${cell}" height="${cell}" fill="${fill}" stroke="#000" stroke-width="${strokeWidth}" />`;
 	};
 
 	const rects = [];
@@ -315,16 +317,16 @@ const renderOllPreviewSvg = (pattern) => {
 		rects.push(drawCell(col + 2, row + 2, isYellow));
 	});
 	pattern.B.forEach((isYellow, index) => {
-		rects.push(drawCell(index + 2, 1, isYellow));
+		rects.push(drawCell(index + 2, 1, isYellow, true));
 	});
 	pattern.F.forEach((isYellow, index) => {
-		rects.push(drawCell(index + 2, 5, isYellow));
+		rects.push(drawCell(index + 2, 5, isYellow, true));
 	});
 	pattern.L.forEach((isYellow, index) => {
-		rects.push(drawCell(1, index + 2, isYellow));
+		rects.push(drawCell(1, index + 2, isYellow, true));
 	});
 	pattern.R.forEach((isYellow, index) => {
-		rects.push(drawCell(5, index + 2, isYellow));
+		rects.push(drawCell(5, index + 2, isYellow, true));
 	});
 
 	return `\n\t\t<svg class="oll-preview" xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" role="img" aria-label="OLL preview">\n\t\t\t${rects.join("\n\t\t\t")}\n\t\t</svg>\n\t`;

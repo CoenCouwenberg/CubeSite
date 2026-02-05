@@ -206,15 +206,15 @@ body {
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	padding: 4px;
-	background: #111;
-	border-radius: 10px;
-	box-shadow: inset 0 0 0 2px #333;
+	padding: 6px;
+	background: #e1e1e1;
+	border-radius: 8px;
+	box-shadow: inset 0 0 0 2px #2c2c2c;
 }
 .oll-preview {
 	display: block;
-	width: 86px;
-	height: 86px;
+	width: 112px;
+	height: 112px;
 }
 .oll-debug-controls {
 	display: flex;
