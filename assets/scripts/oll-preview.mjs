@@ -500,16 +500,8 @@ const renderOllGroups = (groups, ollTable) => {
 	const previewCache = new Map();
 	const ollOverview = document.getElementById("ollOverview");
 	const debugControls = ollOverview ? createDebugControls(ollOverview) : { available: false };
-	const queue = [...groups];
-	const schedule =
-		window.requestIdleCallback ||
-		window.requestAnimationFrame ||
-		((callback) => setTimeout(callback, 0));
 
-	const renderNext = () => {
-		const group = queue.shift();
-		if (!group) return;
-
+	groups.forEach((group) => {
 		const section = document.createElement("section");
 		section.className = "oll-group";
 
@@ -526,12 +518,7 @@ const renderOllGroups = (groups, ollTable) => {
 
 		section.appendChild(cases);
 		ollTable.appendChild(section);
-		if (queue.length) {
-			schedule(renderNext);
-		}
-	};
-
-	schedule(renderNext);
+	});
 };
 
 const renderOllOverview = () => {
