@@ -300,14 +300,23 @@ const renderOllPreviewSvg = (pattern) => {
 	const size = cell * gridSize;
 	const stroke = 2.5;
 	const sideStroke = 1.5;
+	const sideThickness = 6;
 	const yellow = "#f2e600";
 	const gray = "#9b9b9b";
-	const drawCell = (col, row, isYellow, isSide = false) => {
+	const drawCell = (col, row, isYellow, isSide = false, sideOrientation = "horizontal") => {
 		const fill = isYellow ? yellow : gray;
-		const x = col * cell;
-		const y = row * cell;
+		const baseX = col * cell;
+		const baseY = row * cell;
 		const strokeWidth = isSide ? sideStroke : stroke;
-		return `<rect x="${x}" y="${y}" width="${cell}" height="${cell}" fill="${fill}" stroke="#000" stroke-width="${strokeWidth}" />`;
+		if (isSide) {
+			const isHorizontal = sideOrientation === "horizontal";
+			const width = isHorizontal ? cell : sideThickness;
+			const height = isHorizontal ? sideThickness : cell;
+			const x = isHorizontal ? baseX : baseX + (cell - sideThickness) / 2;
+			const y = isHorizontal ? baseY + (cell - sideThickness) / 2 : baseY;
+			return `<rect x="${x}" y="${y}" width="${width}" height="${height}" fill="${fill}" stroke="#000" stroke-width="${strokeWidth}" />`;
+		}
+		return `<rect x="${baseX}" y="${baseY}" width="${cell}" height="${cell}" fill="${fill}" stroke="#000" stroke-width="${strokeWidth}" />`;
 	};
 
 	const rects = [];
@@ -317,16 +326,16 @@ const renderOllPreviewSvg = (pattern) => {
 		rects.push(drawCell(col + 2, row + 2, isYellow));
 	});
 	pattern.B.forEach((isYellow, index) => {
-		rects.push(drawCell(index + 2, 1, isYellow, true));
+		rects.push(drawCell(index + 2, 1, isYellow, true, "horizontal"));
 	});
 	pattern.F.forEach((isYellow, index) => {
-		rects.push(drawCell(index + 2, 5, isYellow, true));
+		rects.push(drawCell(index + 2, 5, isYellow, true, "horizontal"));
 	});
 	pattern.L.forEach((isYellow, index) => {
-		rects.push(drawCell(1, index + 2, isYellow, true));
+		rects.push(drawCell(1, index + 2, isYellow, true, "vertical"));
 	});
 	pattern.R.forEach((isYellow, index) => {
-		rects.push(drawCell(5, index + 2, isYellow, true));
+		rects.push(drawCell(5, index + 2, isYellow, true, "vertical"));
 	});
 
 	return `\n\t\t<svg class="oll-preview" xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" role="img" aria-label="OLL preview">\n\t\t\t${rects.join("\n\t\t\t")}\n\t\t</svg>\n\t`;
